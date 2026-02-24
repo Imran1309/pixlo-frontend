@@ -1,0 +1,67 @@
+/* Container */
+.media-container {
+  padding: 2rem 5%;
+  background: #181818;
+  color: white;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* Headings */
+.media-container h2 {
+  color: #b3995e;
+  margin-bottom: 1rem;
+}
+
+/* Inputs and textarea */
+.media-container input,
+.media-container textarea {
+  display: block;
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 1rem;
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: none;
+  background: #2c2c2c;
+  color: white;
+  outline: none;
+}
+
+/* Buttons */
+.media-container button {
+  background: #b3995e;
+  color: black;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.media-container button:hover {
+  background: #a08a4d;
+}
+
+/* Media previews */
+.media-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.media-preview img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #b3995e;
+}
+
+/* Textarea */
+.media-container textarea {
+  resize: vertical;
+  min-height: 80px;
+}

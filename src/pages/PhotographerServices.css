@@ -1,0 +1,290 @@
+.services-page {
+    background-color: #000;
+    min-height: 100vh;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    padding-bottom: 2rem;
+}
+
+.services-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 3rem;
+}
+
+.services-page-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.services-page-subtitle {
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+}
+
+/* Services Grid */
+.services-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.service-card {
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 1.5rem;
+    background: #0a0a0a;
+}
+
+.service-card-header {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #ddd;
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #eee;
+}
+
+.dark-input-service {
+    width: 100%;
+    background: #000;
+    /* Dark background as shown */
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 0.8rem 1rem;
+    color: #fff;
+    font-size: 0.9rem;
+    outline: none;
+}
+
+/* Rich Text Box reuse style */
+.desc-box-service {
+    background: #000;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 0.8rem;
+    height: 120px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.desc-toolbar-service {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+}
+
+.desc-toolbar-service span {
+    background: #111;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: #ccc;
+    border: 1px solid #444;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    /* Space between text and arrow */
+    cursor: pointer;
+}
+
+/* Add dropdown arrow */
+.desc-toolbar-service span::after {
+    content: "▼";
+    font-size: 0.6rem;
+    color: #888;
+}
+
+.desc-input-service {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #ddd;
+    font-size: 0.95rem;
+    font-family: inherit;
+    resize: none;
+    outline: none;
+    height: 100%;
+}
+
+/* Duration & Price Row */
+.row-2-col {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    /* Duration smaller, Price larger */
+    gap: 2rem;
+}
+
+.row-3-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+}
+
+/* Spinner Input Container */
+.number-input-container {
+    display: flex;
+    align-items: center;
+    background: #000;
+    border: 1px solid #444;
+    border-radius: 5px;
+    /* Rounded corners */
+    overflow: hidden;
+    padding-right: 1px;
+    /* Gap for spinner */
+    width: 100%;
+}
+
+.number-input-field {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #fff;
+    padding: 0.8rem 1rem;
+    font-size: 0.95rem;
+    outline: none;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.number-input-field::-webkit-outer-spin-button,
+.number-input-field::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.spinner-btns {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    /* White background for spinners */
+    border-radius: 2px;
+    margin: 2px 3px 2px 0;
+    width: 12px;
+    /* Small width */
+    border: none;
+}
+
+.spinner-btn {
+    background: #ddd;
+    /* Light grey background */
+    border: none;
+    color: #000;
+    /* Black arrow */
+    font-size: 0.35rem;
+    padding: 0;
+    height: 6px;
+    /* 8px height as requested */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spinner-btn:first-child {
+    border-bottom: 1px solid #999;
+    background: #e0e0e0;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+}
+
+.spinner-btn:last-child {
+    background: #e0e0e0;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+}
+
+.spinner-btn:hover {
+    background: #fff;
+}
+
+/* Add Button */
+.add-service-btn-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 4rem;
+}
+
+.gold-btn-service {
+    background: #CBB26A;
+    color: #000;
+    border: none;
+    padding: 0.8rem 2.5rem;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Tips Section */
+.tips-section-service {
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    background: #050505;
+}
+
+.tips-header-service {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.tips-header-service h4 {
+    font-size: 1.1rem;
+    margin: 0;
+    color: #fff;
+}
+
+.tips-list-service {
+    padding-left: 1.2rem;
+    color: #ccc;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+/* Footer */
+.service-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #222;
+}
+
+@media (max-width: 900px) {
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.remove-service-btn {
+    background: transparent;
+    border: none;
+    color: #666;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0 0.5rem;
+    transition: color 0.2s;
+}
+
+.remove-service-btn:hover {
+    color: #ff4444;
+}

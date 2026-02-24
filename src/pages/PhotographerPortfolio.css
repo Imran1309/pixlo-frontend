@@ -1,0 +1,343 @@
+/* ---------------- About You Page Theme ---------------- */
+
+.about-you-page {
+  background-color: #000;
+  min-height: 100vh;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  padding-bottom: 2rem;
+}
+
+/* Header */
+.portfolio-header {
+  padding: 0 3rem;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #333;
+  margin-bottom: 2rem;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.portfolio-header h2 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #fff;
+  margin: 0;
+}
+
+.header-logo {
+  height: 100%;
+  max-height: 60px;
+  width: auto;
+  object-fit: contain;
+}
+
+.user-avatar-small {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid #555;
+}
+
+.user-avatar-small img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Content Container */
+.about-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 3rem;
+}
+
+/* Headings */
+h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #fff;
+}
+
+.sub-label {
+  color: #888;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+/* Rich Text Area */
+.rich-text-area {
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #111;
+  overflow: hidden;
+  margin-bottom: 3rem;
+}
+
+.rich-text-toolbar {
+  background: #000;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #444;
+  display: flex;
+  gap: 1rem;
+}
+
+.rich-text-toolbar span {
+  font-size: 0.8rem;
+  color: #aaa;
+  border: 1px solid #333;
+  padding: 2px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.rich-text-area textarea {
+  width: 100%;
+  min-height: 150px;
+  background: transparent;
+  border: none;
+  padding: 1rem;
+  color: #ccc;
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+}
+
+/* Form Grid */
+.form-row-grid {
+  display: grid;
+  grid-template-columns: 200px 180px 1fr;
+  /* Experience (narrower), Type (narrow), Location (Full remaining) */
+  gap: 3rem;
+  margin-bottom: 3rem;
+  align-items: start;
+}
+
+.form-group h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+/* Number Input */
+.custom-number-input {
+  display: flex;
+  align-items: center;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 0;
+  width: 150px;
+  background: #000;
+  height: 40px;
+  position: relative;
+}
+
+.custom-number-input input {
+  background: transparent;
+  border: none;
+  color: #fff;
+  width: 100%;
+  padding: 0 1rem;
+  font-size: 1rem;
+  outline: none;
+  /* Hide spin button standard */
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.custom-number-input input::-webkit-outer-spin-button,
+.custom-number-input input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.spinners {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #444;
+  height: 100%;
+}
+
+.spinners button {
+  border: none;
+  background: #222;
+  color: #aaa;
+  font-size: 0.6rem;
+  height: 50%;
+  padding: 0 5px;
+  cursor: pointer;
+}
+
+.spinners button:hover {
+  background: #333;
+}
+
+.spinners button:first-child {
+  border-bottom: 1px solid #444;
+}
+
+/* Checkboxes */
+.checkbox-group-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.custom-checkbox {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: 30px;
+  margin-bottom: 0px;
+  cursor: pointer;
+  font-size: 1rem;
+  user-select: none;
+  color: #ccc;
+}
+
+.custom-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  background-color: transparent;
+  border: 1px solid #666;
+  border-radius: 4px;
+}
+
+.custom-checkbox:hover input~.checkmark {
+  border-color: #999;
+}
+
+.custom-checkbox input:checked~.checkmark {
+  background-color: transparent;
+  border-color: #fff;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.custom-checkbox input:checked~.checkmark:after {
+  display: block;
+}
+
+.custom-checkbox .checkmark:after {
+  left: 5px;
+  top: 1px;
+  width: 5px;
+  height: 10px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Select */
+.custom-select {
+  width: 100%;
+  padding: 14px 16px;
+  /* Increased padding for full visibility */
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #ccc;
+  /* Lighter border for white background */
+  border-radius: 8px;
+  height: auto;
+  /* Allow growth */
+  min-height: 52px;
+  /* Sufficient height */
+  font-size: 1rem;
+  line-height: normal;
+  /* Use normal line height */
+  outline: none;
+  cursor: pointer;
+
+  /* Custom Arrow */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
+}
+
+/* Specialization Grid */
+.specialization-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-width: 800px;
+}
+
+/* Footer Buttons */
+.form-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4rem;
+  border-top: 1px solid #222;
+  padding-top: 2rem;
+}
+
+.btn-back {
+  background: #fff;
+  color: #000;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-continue {
+  background: #CBB26A;
+  /* Gold */
+  color: #000;
+  border: none;
+  padding: 0.8rem 2.5rem;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-continue:hover {
+  background: #d4b96e;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-row-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .specialization-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .portfolio-header {
+    padding: 0 1rem;
+  }
+
+  .about-content {
+    padding: 1rem;
+  }
+}

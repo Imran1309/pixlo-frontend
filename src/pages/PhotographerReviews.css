@@ -1,0 +1,133 @@
+/* ---------------- Photographer Reviews - Dark Gold Premium Theme ---------------- */
+
+.reviews-container {
+  max-width: 1000px;
+  margin: 3rem auto;
+  padding: 3rem;
+  background: #1e1e1e; /* Dark background */
+  border: 1.5px solid #b3995e;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  font-family: "Poppins", sans-serif;
+  transition: all 0.3s ease;
+  color: #f5f5f5; /* Light text */
+}
+
+.reviews-container:hover {
+  box-shadow: 0 14px 40px rgba(179, 153, 94, 0.35);
+}
+
+/* --- Title --- */
+.reviews-container h2 {
+  font-size: 2.3rem;
+  font-weight: 700;
+  text-align: center;
+  color: #b3995e; /* Gold heading */
+  margin-bottom: 2.5rem;
+}
+
+.reviews-container h2::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 3px;
+  margin: 0.8rem auto 0;
+  background: linear-gradient(90deg, #b3995e, #d4c07a);
+  border-radius: 3px;
+}
+
+/* --- Reviews List --- */
+.reviews-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.8rem;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+/* --- Review Card --- */
+.review-card {
+  background: #222; /* Dark card */
+  border-left: 5px solid #b3995e;
+  border-radius: 14px;
+  padding: 1.8rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  transition: 0.3s ease;
+}
+
+.review-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 28px rgba(179, 153, 94, 0.35);
+}
+
+/* --- Review Header --- */
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.review-header h3 {
+  color: #b3995e; /* Gold accent */
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.rating svg {
+  margin-left: 2px;
+  fill: #b3995e;
+}
+
+/* --- Comment --- */
+.review-comment {
+  font-size: 1rem;
+  color: #f5f5f5;
+  margin-bottom: 0.8rem;
+}
+
+/* --- Event Info --- */
+.review-date {
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+/* --- No Reviews Message --- */
+.no-reviews {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #b3995e;
+  font-weight: 600;
+  padding: 2rem;
+  border: 1px dashed #d4c07a;
+  border-radius: 12px;
+  background: rgba(31, 31, 31, 0.5);
+  margin-top: 2rem;
+  animation: fadeIn 0.7s ease-in-out;
+}
+
+/* --- Animation --- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .reviews-container {
+    padding: 2rem;
+  }
+
+  .reviews-container h2 {
+    font-size: 1.9rem;
+  }
+
+  .review-card {
+    padding: 1.3rem;
+  }
+}

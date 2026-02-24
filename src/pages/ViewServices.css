@@ -1,0 +1,147 @@
+/* ViewServices.css */
+
+/* Container */
+.vs-container {
+  padding: 2rem 5%;
+  background: #181818;
+  color: white;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* Heading */
+.vs-heading {
+  color: #b3995e;
+  text-align: center;
+  margin-bottom: 2.5rem;
+  font-size: 2rem;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+/* Services Grid */
+.vs-services-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+}
+
+/* Service Card */
+.vs-service-card {
+  background: #222;
+  border: 1px solid #333;
+  padding: 1.8rem 1.5rem;
+  border-radius: 1rem;
+  width: 320px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+}
+
+.vs-service-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.6);
+  border-color: #b3995e;
+}
+
+/* Service Title */
+.vs-service-title {
+  color: #b3995e;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Service Details */
+.vs-service-desc,
+.vs-service-duration,
+.vs-service-price,
+.vs-service-deliverables {
+  margin: 0.4rem 0;
+  color: #ddd;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* No Services Message */
+.vs-no-services {
+  text-align: center;
+  font-size: 1.3rem;
+  color: #b3995e;
+  margin-top: 3rem;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+  .vs-services-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .vs-service-card {
+    width: 90%;
+  }
+}
+
+/* Toast */
+.vs-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #b3995e;
+  color: black;
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  z-index: 999;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+/* Card Header */
+.vs-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Edit Icon */
+.vs-edit-icon {
+  cursor: pointer;
+  color: #b3995e;
+  font-size: 1.2rem;
+  transition: 0.3s;
+}
+.vs-edit-icon:hover {
+  color: #a08a4d;
+}
+
+/* Edit Form */
+.vs-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.vs-edit-form input {
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: none;
+  background: #2c2c2c;
+  color: white;
+  outline: none;
+}
+.vs-update-btn {
+  padding: 0.6rem 1rem;
+  background: #b3995e;
+  color: black;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.vs-update-btn:hover {
+  background: #a08a4d;
+}

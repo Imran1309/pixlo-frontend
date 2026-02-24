@@ -1,0 +1,312 @@
+.creator-login-page {
+    height: 100vh;
+    /* Fixed height */
+    overflow: hidden;
+    /* Prevent page scroll */
+    background: #000;
+    position: relative;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.creator-login-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+/* Left side: Image */
+.creator-login-image {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    position: relative;
+    padding: 4rem 2rem 4rem 4rem;
+    height: 100vh;
+    /* Ensure full height */
+}
+
+.creator-login-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0;
+}
+
+/* Right side: Form */
+.creator-login-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #000;
+    padding: 4rem;
+    color: #fff;
+    height: 100vh;
+    /* Full height */
+    overflow-y: auto;
+    /* Scroll content if needed */
+}
+
+.creator-header {
+    width: 100%;
+    max-width: 450px;
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.creator-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.creator-header p {
+    font-size: 0.95rem;
+    color: #ccc;
+}
+
+.creator-link {
+    color: #b3995e;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 0.25rem;
+}
+
+.creator-link:hover {
+    text-decoration: underline;
+}
+
+/* Social Buttons Row */
+.creator-social-row {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    max-width: 450px;
+    margin-top: 2rem;
+}
+
+.creator-social-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.9rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.2s;
+    font-size: 0.95rem;
+}
+
+.creator-social-btn:hover {
+    opacity: 0.9;
+}
+
+.creator-social-btn.facebook {
+    background: #3b5998;
+    color: #fff;
+}
+
+.creator-social-btn.google {
+    background: #fff;
+    color: #333;
+}
+
+.social-icon-sm {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    fill: currentColor;
+}
+
+.back-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: transparent;
+    border: 2px solid #fff;
+    color: #fff;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: #fff;
+    color: #000;
+}
+
+/* Divider */
+.creator-divider {
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 2rem 0;
+    color: #666;
+}
+
+.creator-divider::before,
+.creator-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #333;
+}
+
+.creator-divider span {
+    padding: 0 1rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Form */
+.creator-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 450px;
+}
+
+.creator-form label {
+    text-align: left;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #ddd;
+    font-size: 0.9rem;
+}
+
+.creator-form input {
+    padding: 0.9rem 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 6px;
+    border: 1px solid #fff;
+    background: #fff;
+    color: #000;
+    outline: none;
+    font-size: 1rem;
+    width: 100%;
+}
+
+.creator-form input::placeholder {
+    color: #999;
+}
+
+.creator-password-input {
+    position: relative;
+    width: 100%;
+    display: block;
+    margin-bottom: 3rem;
+    /* Move margin here from input */
+}
+
+.creator-password-input input {
+    width: 100%;
+    padding-right: 45px;
+    margin-bottom: 0;
+    font-family: 'Verdana', sans-serif;
+    /* Ensures password dots are vertically centered */
+    letter-spacing: 0.125em;
+}
+
+.creator-password-input input[type="text"] {
+    font-family: 'Inter', sans-serif;
+    letter-spacing: normal;
+}
+
+.creator-eye-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    outline: none;
+    margin: 0;
+    /* Reset global margins */
+    padding: 0;
+    /* Reset global padding */
+}
+
+.creator-eye-btn:focus,
+.creator-eye-btn:active,
+.creator-eye-btn:hover {
+    outline: none;
+}
+
+/* Login Button */
+/* Login Button */
+.creator-login-btn {
+    padding: 0.9rem;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    /* Prepare for border transition */
+    background: #b3995e;
+    /* Gold */
+    color: #222;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.creator-login-btn:hover {
+    background: transparent;
+    color: #b3995e;
+    border-color: #b3995e;
+}
+
+@media (max-width: 900px) {
+    .creator-login-container {
+        flex-direction: column;
+    }
+
+    .creator-login-image {
+        display: none;
+    }
+
+    .creator-login-card {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .creator-login-card {
+        padding: 1.5rem;
+    }
+
+    .creator-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .creator-form input {
+        padding: 0.8rem 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .creator-social-row {
+        flex-direction: column;
+    }
+
+    .creator-login-btn {
+        padding: 0.8rem;
+    }
+}

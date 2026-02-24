@@ -1,0 +1,297 @@
+.creator-signup-page {
+    height: 100vh;
+    overflow: hidden;
+    background: #000;
+    position: relative;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.creator-signup-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+/* Left side: Form (Scrollable) */
+.creator-signup-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    /* Align top for long form */
+    align-items: center;
+    background: #000;
+    padding: 2rem 4rem;
+    /* Reduced padding for more space */
+    color: #fff;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+/* Scrollbar styling for webkit */
+.creator-signup-card::-webkit-scrollbar {
+    width: 8px;
+}
+
+.creator-signup-card::-webkit-scrollbar-track {
+    background: #000;
+}
+
+.creator-signup-card::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+
+/* Right side: Image (Fixed) */
+.creator-signup-image {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    position: relative;
+    padding: 4rem 4rem 4rem 2rem;
+    /* Margin-like padding (reversed from login) */
+    height: 100vh;
+}
+
+.creator-signup-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0;
+}
+
+/* Header */
+.signup-header {
+    width: 100%;
+    max-width: 550px;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.signup-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.signup-header p {
+    font-size: 0.95rem;
+    color: #ccc;
+}
+
+.signup-link {
+    color: #b3995e;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 0.25rem;
+}
+
+.signup-link:hover {
+    text-decoration: underline;
+}
+
+/* Form Layout */
+.creator-signup-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 550px;
+    gap: 1.2rem;
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+}
+
+.form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.form-group label {
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+    color: #ddd;
+    font-size: 0.85rem;
+}
+
+.form-group input,
+.form-group select {
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    border: 1px solid #fff;
+    background: #fff;
+    color: #000;
+    outline: none;
+    font-size: 0.95rem;
+    width: 100%;
+}
+
+.form-group input::placeholder {
+    color: #999;
+}
+
+/* Password Input */
+.password-input-wrapper {
+    position: relative;
+    width: 100%;
+    display: block;
+    /* changed from flex to ensure correct height for absolute positioning reference */
+}
+
+.password-input-wrapper input {
+    width: 100%;
+    padding-right: 40px;
+    margin: 0;
+    /* Ensure no margin affects height */
+}
+
+.eye-icon-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    outline: none;
+    margin: 0;
+    padding: 0;
+}
+
+.eye-icon-btn:focus,
+.eye-icon-btn:active,
+.eye-icon-btn:hover {
+    outline: none;
+    background: transparent;
+    box-shadow: none;
+    color: #666;
+    /* Ensure color doesn't change to gold if unwanted */
+}
+
+/* Terms Checkbox */
+.terms-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: #ccc;
+}
+
+.terms-container input {
+    margin-top: 0.2rem;
+    cursor: pointer;
+    accent-color: #b3995e;
+    /* Gold checkbox */
+    width: 16px;
+    height: 16px;
+}
+
+.terms-text {
+    line-height: 1.4;
+}
+
+/* Submit Button */
+/* Submit Button */
+.signup-submit-btn {
+    padding: 0.9rem;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    /* Prepare for border transition */
+    background: #b3995e;
+    /* Gold */
+    color: #222;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+}
+
+.signup-submit-btn:hover,
+.signup-submit-btn:active {
+    background: transparent;
+    color: #b3995e;
+    border-color: #b3995e;
+}
+
+.back-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    /* Left aligned for this page? Or keep right? Standard is fixed corner. Keeping left since form is left might overlap. Let's keep consistent with others or move based on usability. Login has it at Right top. Form is left there too... wait. Login form is right, image left? No, user said "creators login... image fix...".
+  Actually, let's keep it top-left or top-right. I'll stick to fixed top-left for navigation consistency if possible, or top-right. The Login page has it top-right. I'll use top-right here too. */
+    right: 20px;
+    z-index: 1000;
+    background: transparent;
+    border: 2px solid #fff;
+    color: #fff;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: #fff;
+    color: #000;
+}
+
+@media (max-width: 900px) {
+    .creator-signup-container {
+        flex-direction: column-reverse;
+        flex-direction: column;
+    }
+
+    .creator-signup-image {
+        display: none;
+    }
+
+    .creator-signup-card {
+        padding: 2rem;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .creator-signup-card {
+        padding: 1.5rem;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+        /* Let margins handle spacing if any, or small gap */
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .signup-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .signup-submit-btn {
+        padding: 0.8rem;
+    }
+}

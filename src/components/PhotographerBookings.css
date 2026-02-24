@@ -1,0 +1,193 @@
+/* ---------------- Photographer Bookings - Dark Gold Theme ---------------- */
+
+.bookings-container {
+  max-width: 1100px;
+  margin: 3rem auto;
+  padding: 3rem;
+  background: #222; /* dark theme background */
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  font-family: Arial, sans-serif;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.bookings-container:hover {
+  box-shadow: 0 14px 40px rgba(179, 153, 94, 0.5);
+}
+
+/* --- Title --- */
+.bookings-title {
+  font-size: 2.3rem;
+  font-weight: 700;
+  text-align: center;
+  color: #b3995e; /* gold accent */
+  letter-spacing: 0.7px;
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+
+.bookings-title::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 3px;
+  margin: 0.8rem auto 0;
+  background: linear-gradient(90deg, #b3995e, #d4b96e);
+  border-radius: 3px;
+}
+
+/* --- Loading & No Bookings Text --- */
+.loading-text,
+.no-bookings-text {
+  text-align: center;
+  color: #b3995e;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+/* --- Grid Layout --- */
+.bookings-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.8rem;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+/* --- Booking Card --- */
+.booking-card {
+  background: #2c2c2c; /* dark card background */
+  border-left: 5px solid #b3995e;
+  border-radius: 14px;
+  padding: 1.8rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.booking-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 28px rgba(179, 153, 94, 0.5);
+}
+
+/* --- Customer Name --- */
+.booking-customer {
+  color: #b3995e;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+
+.customer-name {
+  color: white;
+  font-weight: 500;
+}
+
+/* --- Booking Details --- */
+.booking-card p {
+  margin: 0.4rem 0;
+  font-size: 1rem;
+  color: white;
+  line-height: 1.4;
+}
+
+.booking-card strong {
+  color: #b3995e;
+  font-weight: 600;
+}
+
+/* --- Status Badge --- */
+.booking-status {
+  margin-top: 0.8rem;
+}
+
+.status-badge {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: 20px;
+  text-transform: capitalize;
+  transition: all 0.3s ease;
+}
+
+.status-badge.pending {
+  background-color: rgba(179, 153, 94, 0.2);
+  color: #b3995e;
+}
+
+.status-badge.accepted {
+  background-color: rgba(76, 175, 80, 0.15);
+  color: #388e3c;
+}
+
+.status-badge.rejected {
+  background-color: rgba(211, 47, 47, 0.15);
+  color: #d32f2f;
+}
+
+.status-badge.completed {
+  background-color: rgba(33, 150, 243, 0.15);
+  color: #1976d2;
+}
+
+.status-badge.cancelled {
+  background-color: rgba(158, 158, 158, 0.15);
+  color: #616161;
+}
+
+/* --- Status Dropdown Styling --- */
+.update-status-section {
+  margin-top: 1.2rem;
+}
+
+.status-select {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  font-size: 0.95rem;
+  border-radius: 10px;
+  border: 1.5px solid rgba(179, 153, 94, 0.4);
+  background: #2c2c2c; /* dark input background */
+  color: white;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.status-select:hover {
+  border-color: #b3995e;
+  box-shadow: 0 0 8px rgba(179, 153, 94, 0.25);
+}
+
+.status-select:focus {
+  border-color: #a08a4d;
+  box-shadow: 0 0 10px rgba(160, 138, 77, 0.35);
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Responsive --- */
+@media screen and (max-width: 768px) {
+  .bookings-container {
+    padding: 2rem;
+  }
+
+  .bookings-title {
+    font-size: 1.8rem;
+  }
+
+  .booking-card {
+    padding: 1.3rem;
+  }
+}

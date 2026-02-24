@@ -1,0 +1,110 @@
+/* ---------------- Rate & Review - Dark Gold Premium Theme ---------------- */
+
+.rate-review-container {
+  max-width: 700px;
+  margin: 3rem auto;
+  padding: 3rem 2.5rem;
+  background: #1e1e1e; /* Dark container */
+  border: 1.5px solid #b3995e;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  font-family: "Poppins", sans-serif;
+  transition: all 0.3s ease;
+  color: #f5f5f5; /* Light text */
+}
+
+.rate-review-container:hover {
+  box-shadow: 0 14px 40px rgba(179, 153, 94, 0.35);
+}
+
+/* --- Title --- */
+.rate-review-container h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  color: #b3995e; /* Gold title */
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.rate-review-container h2::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 3px;
+  margin: 0.8rem auto 0;
+  background: linear-gradient(90deg, #b3995e, #d4c07a);
+  border-radius: 3px;
+}
+
+/* --- Form Styling --- */
+.rate-review-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.rate-review-container label {
+  font-weight: 600;
+  margin: 0.8rem 0 0.3rem;
+  color: #b3995e; /* Gold label */
+}
+
+.rate-review-container input,
+.rate-review-container textarea {
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  border: 1.5px solid rgba(179, 153, 94, 0.4);
+  background: #222; /* Dark input */
+  color: #f5f5f5; /* Light text */
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.rate-review-container input:focus,
+.rate-review-container textarea:focus {
+  border-color: #b3995e;
+  box-shadow: 0 0 10px rgba(179, 153, 94, 0.35);
+}
+
+.rate-review-container textarea {
+  min-height: 120px;
+  resize: vertical;
+  margin-bottom: 1.5rem;
+}
+
+/* --- Submit Button (Gold Theme) --- */
+.rate-review-container button {
+  background: linear-gradient(135deg, #bfa06b, #d4c07a); /* gold gradient */
+  color: #1e1e1e; /* dark text for contrast */
+  border: none;
+  padding: 12px 22px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.rate-review-container button:hover {
+  background: linear-gradient(135deg, #d4c07a, #bfa06b);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+}
+
+.rate-review-container button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* --- Responsive --- */
+@media screen and (max-width: 768px) {
+  .rate-review-container {
+    padding: 2rem;
+  }
+
+  .rate-review-container h2 {
+    font-size: 1.7rem;
+  }
+}

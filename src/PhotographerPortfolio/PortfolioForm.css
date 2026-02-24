@@ -1,0 +1,95 @@
+/* PortfolioForm.css */
+
+/* Container */
+.portfolio-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* increased gap */
+  max-width: 700px;
+  background: #222;
+  padding: 2.5rem; /* slightly larger padding */
+  border-radius: 1rem;
+  margin: 3rem auto; /* more top-bottom margin */
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+/* Headings */
+.portfolio-form h2 {
+  color: #b3995e;
+  margin-bottom: 1.5rem; /* more spacing below heading */
+}
+
+/* Inputs and Selects */
+.portfolio-form input,
+.portfolio-form select {
+  padding: 1rem; /* increased padding for better spacing */
+  border-radius: 8px;
+  border: none;
+  background: #2c2c2c;
+  color: white;
+  outline: none;
+  width: 100%;
+  margin-bottom: 0.8rem; /* spacing between fields */
+}
+
+/* Location Inputs */
+.location-section {
+  display: flex;
+  gap: 0.8rem; /* slightly larger gap */
+  flex-wrap: wrap;
+  margin-top: 1.5rem; /* more space above */
+}
+
+.location-section input {
+  width: calc(50% - 0.4rem); /* adjust for the increased gap */
+  margin-bottom: 0.8rem;
+}
+
+/* Buttons */
+button {
+  background: #b3995e;
+  color: black;
+  border: none;
+  padding: 1rem 1.8rem; /* more padding for comfort */
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+  margin-top: 1rem; /* spacing above button */
+}
+
+button:hover {
+  background: #a08a4d;
+}
+
+/* Specializations Section */
+.specialization-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem; /* increased gap */
+  margin-top: 1rem; /* spacing from previous input */
+}
+
+.specialization-section label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem; /* slightly bigger gap between checkbox and text */
+  font-size: 0.95rem;
+}
+
+.specialization-section input[type="checkbox"] {
+  accent-color: #b3995e;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .portfolio-form {
+    max-width: 95%;
+    padding: 2rem; /* slightly bigger on mobile */
+  }
+
+  .location-section input {
+    width: 100%;
+  }
+}
