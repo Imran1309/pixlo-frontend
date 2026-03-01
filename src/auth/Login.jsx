@@ -50,10 +50,10 @@ const Login = () => {
     }
   };
 
-const handleGoogleLogin = useGoogleLogin({
+  const handleGoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        const API = import.meta.env.VITE_API_URL;
+        const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
         const res = await fetch(`${API}/api/auth/google-login`, {
           method: "POST",
           headers: {
@@ -134,12 +134,12 @@ const handleGoogleLogin = useGoogleLogin({
                   </button>
                 </div>
                 <div className="forgot-password-row">
-                    <span
-                      className="forgot-password-link"
-                      onClick={() => navigate("/forgot-password")}
-                    >
-                      Forgot Password?
-                    </span>
+                  <span
+                    className="forgot-password-link"
+                    onClick={() => navigate("/forgot-password")}
+                  >
+                    Forgot Password?
+                  </span>
                 </div>
               </div>
 
@@ -169,7 +169,7 @@ const handleGoogleLogin = useGoogleLogin({
             </p>
 
           </div>
-          
+
           <div className="login-footer">
             <p>© 2025 ALL RIGHTS RESERVED</p>
           </div>
@@ -178,7 +178,7 @@ const handleGoogleLogin = useGoogleLogin({
         <div className="login-image">
           <img src={carousel2} alt="Photographer with Camera" />
         </div>
-    </div>
+      </div>
     </div>
   );
 };

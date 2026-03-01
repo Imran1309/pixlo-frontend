@@ -53,40 +53,21 @@ const PhotographerPortfolio = () => {
   const userId = user?._id;
   const navigate = useNavigate();
 
+  /* ================= FETCH PROFILE ================= */
   useEffect(() => {
     if (!userId) return;
-    
-    // Mock flow handling
-    const token = localStorage.getItem("token");
-    if (token === "mock-creator-token") {
-        const localP = JSON.parse(localStorage.getItem("mock-photographer"));
-        if (localP) {
-            setPhotographer(localP);
-            setForm({
-                introduction: localP.introduction || "",
-                yearsOfExperience: localP.yearsOfExperience || "",
-                typeOfWork: localP.typeOfWork || "Photographer",
-                specialization: localP.specialization || [],
-                latitude: localP.location?.coordinates?.[1] || "",
-                longitude: localP.location?.coordinates?.[0] || "",
-            });
-            setAvailabilityForm(localP.availability || availabilityForm);
-            setLeadTimeForm(localP.bookingLeadTime || leadTimeForm);
-        } else {
-            setPhotographer(null);
-        }
-        setLoading(false);
-        return;
-    }
 
     const fetchProfile = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/photographers/profile/${userId}`
+          `${import.meta.env.VITE_API_URL}/api/photographers/profile/${userId}`,
         );
+
         const p = res.data.photographer;
+
         if (p) {
           setPhotographer(p);
+
           setForm({
             introduction: p.introduction || "",
             yearsOfExperience: p.yearsOfExperience || "",
@@ -95,21 +76,31 @@ const PhotographerPortfolio = () => {
             latitude: p.location?.coordinates?.[1] || "",
             longitude: p.location?.coordinates?.[0] || "",
           });
+
           setAvailabilityForm(p.availability || availabilityForm);
           setLeadTimeForm(p.bookingLeadTime || leadTimeForm);
+        } else {
+          setPhotographer(null);
         }
       } catch (err) {
-        if (err.response?.status === 404) setPhotographer(null);
-        else console.error(err);
+        if (err.response?.status === 404) {
+          setPhotographer(null);
+        } else {
+          console.error(err);
+        }
       } finally {
         setLoading(false);
       }
     };
+
     fetchProfile();
   }, [userId]);
 
+  /* ================= FORM HANDLERS ================= */
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
     setForm((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -118,6 +109,7 @@ const PhotographerPortfolio = () => {
 
   const handleSpecialization = (e) => {
     const { value, checked } = e.target;
+
     setForm((prev) => ({
       ...prev,
       specialization: checked
@@ -127,39 +119,33 @@ const PhotographerPortfolio = () => {
   };
 
   const getCurrentLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) =>
-          setForm((prev) => ({
-            ...prev,
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
-          })),
-        () => alert("Unable to get location. Allow location access.")
-      );
-    } else alert("Geolocation not supported.");
+    if (!navigator.geolocation) return alert("Geolocation not supported.");
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) =>
+        setForm((prev) => ({
+          ...prev,
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+        })),
+      () => alert("Unable to get location. Allow location access."),
+    );
   };
+
+  /* ================= SAVE PROFILE ================= */
 
   const saveProfile = async () => {
     try {
       const payload = { userId, ...form };
-      
-      const token = localStorage.getItem("token");
-      if (token === "mock-creator-token") {
-          const updatedP = { ...photographer, ...form, location: { type: 'Point', coordinates: [form.longitude, form.latitude] } };
-          localStorage.setItem("mock-photographer", JSON.stringify(updatedP));
-          setPhotographer(updatedP);
-          setEditMode(false);
-          alert("Profile updated successfully! (Mock)");
-          return;
-      }
 
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/photographers/profile`,
-        payload
+        payload,
       );
+
       setPhotographer(res.data.photographer);
       setEditMode(false);
+
       alert("Profile updated successfully!");
     } catch (err) {
       console.error(err);
@@ -190,12 +176,14 @@ const PhotographerPortfolio = () => {
           >
             Profile
           </button>
+
           <button
             className={activeTab === "images" ? "active" : ""}
             onClick={() => setActiveTab("images")}
           >
             Portfolio Images
           </button>
+
           <button
             className={activeTab === "videos" ? "active" : ""}
             onClick={() => setActiveTab("videos")}
@@ -214,11 +202,16 @@ const PhotographerPortfolio = () => {
         />
       ) : (
         <>
+          {/* ================= PROFILE TAB ================= */}
           {activeTab === "profile" && (
             <>
               <h1>
-                📸 {photographer.introduction}{" "}
-                <Pencil onClick={() => setEditMode(!editMode)} size={18} />
+                📸 {photographer.introduction}
+                <Pencil
+                  onClick={() => setEditMode(!editMode)}
+                  size={18}
+                  style={{ cursor: "pointer", marginLeft: "8px" }}
+                />
               </h1>
 
               {editMode ? (
@@ -230,6 +223,7 @@ const PhotographerPortfolio = () => {
                     value={form.introduction}
                     onChange={handleChange}
                   />
+
                   <input
                     type="number"
                     name="yearsOfExperience"
@@ -237,6 +231,7 @@ const PhotographerPortfolio = () => {
                     value={form.yearsOfExperience}
                     onChange={handleChange}
                   />
+
                   <select
                     name="typeOfWork"
                     value={form.typeOfWork}
@@ -249,6 +244,7 @@ const PhotographerPortfolio = () => {
 
                   <div className="specialization-section">
                     <label>Specializations:</label>
+
                     {specializations.map((spec) => (
                       <label key={spec}>
                         <input
@@ -265,21 +261,21 @@ const PhotographerPortfolio = () => {
                   <div className="location-section">
                     <input
                       type="text"
-                      name="latitude"
-                      placeholder="Latitude"
                       value={form.latitude}
                       readOnly
+                      placeholder="Latitude"
                       className="coords-input"
                     />
+
                     <input
                       type="text"
-                      name="longitude"
-                      placeholder="Longitude"
                       value={form.longitude}
                       readOnly
+                      placeholder="Longitude"
                       className="coords-input"
                     />
-                    <button type="button" onClick={getCurrentLocation}>
+
+                    <button onClick={getCurrentLocation}>
                       Use My Location
                     </button>
                   </div>
@@ -295,13 +291,16 @@ const PhotographerPortfolio = () => {
                     <p>
                       <b>Experience:</b> {photographer.yearsOfExperience} years
                     </p>
+
                     <p>
                       <b>Type of Work:</b> {photographer.typeOfWork}
                     </p>
+
                     <p>
                       <b>Specializations:</b>{" "}
                       {photographer.specialization.join(", ")}
                     </p>
+
                     <p>
                       <b>Location:</b>{" "}
                       {photographer.location?.coordinates
@@ -315,18 +314,21 @@ const PhotographerPortfolio = () => {
                     handleViewServices={() => navigate(`/services/${userId}`)}
                     setPhotographer={setPhotographer}
                   />
+
                   <AvailabilitySection
                     userId={userId}
                     availabilityForm={availabilityForm}
                     setAvailabilityForm={setAvailabilityForm}
                     setPhotographer={setPhotographer}
                   />
+
                   <ExceptionSection
                     userId={userId}
                     exceptionForm={exceptionForm}
                     setExceptionForm={setExceptionForm}
                     setPhotographer={setPhotographer}
                   />
+
                   <LeadTimeSection
                     userId={userId}
                     leadTimeForm={leadTimeForm}
@@ -338,6 +340,7 @@ const PhotographerPortfolio = () => {
             </>
           )}
 
+          {/* ================= IMAGES TAB ================= */}
           {activeTab === "images" && (
             <PortfolioImagesPage
               userId={userId}
@@ -345,6 +348,7 @@ const PhotographerPortfolio = () => {
             />
           )}
 
+          {/* ================= VIDEOS TAB ================= */}
           {activeTab === "videos" && (
             <PortfolioVideosPage
               userId={userId}

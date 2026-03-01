@@ -47,7 +47,7 @@ const ViewProfile = () => {
       alert("Please login to submit a review.");
       return;
     }
-    
+
     setIsSubmittingReview(true);
     try {
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/photographers/${photographer._id}/reviews`, {
@@ -84,17 +84,17 @@ const ViewProfile = () => {
   const handleMessageClick = () => {
     const contactMethod = photographer.userId?.phone;
     if (contactMethod) {
-       // Remove non-numeric characters for reliable WhatsApp routing, default to standard INR country code format if local
-       let cleanPhone = contactMethod.replace(/\D/g, '');
-       if (cleanPhone.length === 10) { cleanPhone = '91' + cleanPhone; }
-       const message = encodeURIComponent(`Hi ${name}, I found your profile on Pixlo and I'm interested in working with you!`);
-       window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
+      // Remove non-numeric characters for reliable WhatsApp routing, default to standard INR country code format if local
+      let cleanPhone = contactMethod.replace(/\D/g, '');
+      if (cleanPhone.length === 10) { cleanPhone = '91' + cleanPhone; }
+      const message = encodeURIComponent(`Hi ${name}, I found your profile on Pixlo and I'm interested in working with you!`);
+      window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
     } else if (photographer.userId?.email) {
-       const subject = encodeURIComponent("Inquiry from Pixlo");
-       const body = encodeURIComponent(`Hi ${name},\n\nI found your profile on Pixlo and I'm interested in booking a shoot with you.\n\nBest regards,`);
-       window.open(`mailto:${photographer.userId.email}?subject=${subject}&body=${body}`);
+      const subject = encodeURIComponent("Inquiry from Pixlo");
+      const body = encodeURIComponent(`Hi ${name},\n\nI found your profile on Pixlo and I'm interested in booking a shoot with you.\n\nBest regards,`);
+      window.open(`mailto:${photographer.userId.email}?subject=${subject}&body=${body}`);
     } else {
-       alert("Contact information currently unavailable for this creator.");
+      alert("Contact information currently unavailable for this creator.");
     }
   };
 
@@ -110,7 +110,23 @@ const ViewProfile = () => {
   const profilePic = photographer.userId?.profilePic || defaultProfilePic;
   const name = photographer.userId?.name || "Photographer Name";
   const intro = photographer.introduction || photographer.typeOfWork || "Professional Photographer";
-  
+
+  const getEmbedUrl = (url) => {
+    if (!url) return "";
+    let videoId = "";
+    if (url.includes("youtube.com/watch?v=")) {
+      videoId = url.split("v=")[1].split("&")[0];
+      return `https://www.youtube.com/embed/${videoId}`;
+    } else if (url.includes("youtu.be/")) {
+      videoId = url.split("youtu.be/")[1].split("?")[0];
+      return `https://www.youtube.com/embed/${videoId}`;
+    } else if (url.includes("vimeo.com/")) {
+      videoId = url.split("vimeo.com/")[1].split("?")[0];
+      return `https://player.vimeo.com/video/${videoId}`;
+    }
+    return url;
+  };
+
   return (
     <div className="vp-page-container">
       {/* Top Header Section */}
@@ -125,7 +141,7 @@ const ViewProfile = () => {
             <span className="review-count"> (100 reviews)</span>
           </div>
           <div className="vp-header-buttons">
-            <button className="vp-btn vp-btn-primary" onClick={() => document.getElementById('packages').scrollIntoView({behavior: 'smooth'})}>Book now</button>
+            <button className="vp-btn vp-btn-primary" onClick={() => document.getElementById('packages').scrollIntoView({ behavior: 'smooth' })}>Book now</button>
             <button className="vp-btn vp-btn-outline" onClick={handleMessageClick}>Message</button>
           </div>
         </div>
@@ -145,18 +161,43 @@ const ViewProfile = () => {
           {photographer.portfolioImages?.length > 0 ? (
             photographer.portfolioImages.slice(0, 3).map((img, idx) => (
               <div key={idx} className="vp-gallery-item">
-                <img src={img} alt={`Portfolio ${idx}`} />
+                <img src={img.url || img} alt={`Portfolio ${idx}`} />
               </div>
             ))
           ) : (
             <>
-               <div className="vp-gallery-item"><img src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60" alt="placeholder" /></div>
-               <div className="vp-gallery-item"><img src="https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60" alt="placeholder" /></div>
-               <div className="vp-gallery-item"><img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60" alt="placeholder" /></div>
+              <div className="vp-gallery-item"><img src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60" alt="placeholder" /></div>
+              <div className="vp-gallery-item"><img src="https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60" alt="placeholder" /></div>
+              <div className="vp-gallery-item"><img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60" alt="placeholder" /></div>
             </>
           )}
         </div>
       </div>
+
+      {/* Portfolio Videos */}
+      {photographer.portfolioVideos?.length > 0 && (
+        <div className="vp-section">
+          <div className="vp-section-header-flex">
+            <h2 className="vp-section-title">Portfolio Videos</h2>
+          </div>
+          <div className="vp-gallery-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
+            {photographer.portfolioVideos.map((video) => (
+              <div key={video._id} className="vp-video-item" style={{ width: '100%' }}>
+                <iframe
+                  width="100%"
+                  height="220"
+                  src={getEmbedUrl(video.videoLink || video.link || "")}
+                  allowFullScreen
+                  title={video.title || "Portfolio Video"}
+                  style={{ borderRadius: "12px", border: "none" }}
+                />
+                <h4 style={{ color: "#fff", marginTop: "0.8rem", fontSize: "1.1rem" }}>{video.title}</h4>
+                {video.description && <p style={{ color: "#ccc", fontSize: "0.9rem", marginTop: "0.3rem" }}>{video.description}</p>}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* About the Creator */}
       <div className="vp-about-box">
@@ -164,7 +205,7 @@ const ViewProfile = () => {
         <p className="vp-about-desc">
           {photographer.introduction || `${name} is a passionate lifestyle and fine-art wedding photographer known for capturing raw emotions and natural moments with an unscripted touch. With an eye for storytelling and a warm, people-first approach, ${name} turns everyday scenes into timeless memories. From cozy couple shoots to vibrant family portraits, the work beautifully blends elegance with authenticity—perfect for those looking to freeze their most heartfelt moments forever.`}
         </p>
-        
+
         <h3 className="vp-equip-title">Equipment</h3>
         <div className="vp-equip-list">
           <p><strong>Camera Body:</strong></p>
@@ -187,7 +228,7 @@ const ViewProfile = () => {
 
       {/* Packages Section */}
       <div className="vp-section" id="packages">
-        <h2 className="vp-centered-title">Select the Best Photography Package for<br/>Your Perfect Shoot</h2>
+        <h2 className="vp-centered-title">Select the Best Photography Package for<br />Your Perfect Shoot</h2>
         <div className="vp-packages-flex">
           {photographer.services?.length > 0 ? (
             photographer.services.map((s, idx) => (
@@ -209,7 +250,7 @@ const ViewProfile = () => {
               </div>
             ))
           ) : (
-             <>
+            <>
               <div className="vp-package-card">
                 <div className="pkg-header">
                   <span className="pkg-name">Premium</span>
@@ -255,7 +296,7 @@ const ViewProfile = () => {
                 </ul>
                 <button className="vp-btn-full" onClick={() => handleBookNow({})}>Book Now</button>
               </div>
-             </>
+            </>
           )}
         </div>
       </div>
@@ -263,95 +304,95 @@ const ViewProfile = () => {
       {/* Ratings & Reviews Section */}
       <div className="vp-section">
         <h2 className="vp-section-title">Ratings & Reviews</h2>
-        
+
         <div className="vp-reviews-container">
           {/* Left Side: Summary */}
           <div className="vp-reviews-summary">
             <h3>Ratings & Reviews (235)</h3>
             <p className="summary-subtitle">Summary</p>
-            
+
             <div className="rating-bars">
-               <div className="rating-bar-row">
-                 <div className="bar-bg"><div className="bar-fill" style={{width: '90%'}}></div></div>
-                 <span className="star-num">4.5★</span>
-               </div>
-               <div className="rating-bar-row">
-                 <div className="bar-bg"><div className="bar-fill" style={{width: '70%'}}></div></div>
-                 <span className="star-num"></span>
-               </div>
-               <div className="rating-bar-row">
-                 <div className="bar-bg"><div className="bar-fill" style={{width: '30%'}}></div></div>
-                 <span className="star-num"></span>
-               </div>
-               <div className="rating-bar-row">
-                 <div className="bar-bg"><div className="bar-fill" style={{width: '10%'}}></div></div>
-                 <span className="star-num"></span>
-               </div>
-               <div className="rating-bar-row">
-                 <div className="bar-bg"><div className="bar-fill" style={{width: '5%'}}></div></div>
-                 <span className="star-num"></span>
-               </div>
+              <div className="rating-bar-row">
+                <div className="bar-bg"><div className="bar-fill" style={{ width: '90%' }}></div></div>
+                <span className="star-num">4.5★</span>
+              </div>
+              <div className="rating-bar-row">
+                <div className="bar-bg"><div className="bar-fill" style={{ width: '70%' }}></div></div>
+                <span className="star-num"></span>
+              </div>
+              <div className="rating-bar-row">
+                <div className="bar-bg"><div className="bar-fill" style={{ width: '30%' }}></div></div>
+                <span className="star-num"></span>
+              </div>
+              <div className="rating-bar-row">
+                <div className="bar-bg"><div className="bar-fill" style={{ width: '10%' }}></div></div>
+                <span className="star-num"></span>
+              </div>
+              <div className="rating-bar-row">
+                <div className="bar-bg"><div className="bar-fill" style={{ width: '5%' }}></div></div>
+                <span className="star-num"></span>
+              </div>
             </div>
           </div>
-          
+
           {/* Right Side: Reviews List & Form */}
           <div className="vp-reviews-list">
-             <div className="vp-write-review">
-                <h4 style={{marginBottom: "1rem", fontSize: "1.1rem"}}>Write a Review</h4>
-                <form onSubmit={handleSubmitReview} className="vp-review-form">
-                   <div className="vp-review-rating-select">
-                      <label>Rating: </label>
-                      <select value={reviewRating} onChange={(e) => setReviewRating(Number(e.target.value))}>
-                         <option value="5">5 ★★★★★</option>
-                         <option value="4">4 ★★★★</option>
-                         <option value="3">3 ★★★</option>
-                         <option value="2">2 ★★</option>
-                         <option value="1">1 ★</option>
-                      </select>
-                   </div>
-                   <textarea 
-                     className="vp-review-textarea" 
-                     placeholder="Share your experience with this creator..."
-                     value={reviewComment}
-                     onChange={(e) => setReviewComment(e.target.value)}
-                     required
-                     rows={3}
-                   ></textarea>
-                   <button type="submit" className="vp-btn vp-btn-primary" disabled={isSubmittingReview} style={{marginTop: "1rem"}}>
-                     {isSubmittingReview ? "Submitting..." : "Submit Review"}
-                   </button>
-                </form>
-             </div>
-             
-             {/* Divider */}
-             <div style={{width: '100%', height: '1px', backgroundColor: '#333', margin: '2rem 0'}}></div>
-
-             {reviews.length > 0 ? reviews.map((rev) => (
-                <div key={rev._id} className="review-item">
-                  <div className="rev-header">
-                    <img src={rev.customerId?.profilePic || "https://via.placeholder.com/40"} alt="user" className="rev-avatar" />
-                    <div className="rev-user-info">
-                       <span className="rev-name">{rev.customerId?.name || "User"}</span>
-                       <span className="rev-stars">{'★'.repeat(rev.rating)}</span>
-                    </div>
-                    <span className="rev-time">{new Date(rev.createdAt).toLocaleDateString()}</span>
-                  </div>
-                  <p className="rev-text">{rev.comment}</p>
-                  <div className="rev-footer-stats">
-                     <span>Helpful</span>
-                  </div>
+            <div className="vp-write-review">
+              <h4 style={{ marginBottom: "1rem", fontSize: "1.1rem" }}>Write a Review</h4>
+              <form onSubmit={handleSubmitReview} className="vp-review-form">
+                <div className="vp-review-rating-select">
+                  <label>Rating: </label>
+                  <select value={reviewRating} onChange={(e) => setReviewRating(Number(e.target.value))}>
+                    <option value="5">5 ★★★★★</option>
+                    <option value="4">4 ★★★★</option>
+                    <option value="3">3 ★★★</option>
+                    <option value="2">2 ★★</option>
+                    <option value="1">1 ★</option>
+                  </select>
                 </div>
-             )) : (
-                 <p style={{color: '#888', marginTop: '1rem'}}>No reviews yet. Be the first to review!</p>
-             )}
-             
-             <div className="vp-view-all-reviews">
-               <button className="vp-btn vp-btn-outline" onClick={handleViewReviews}>View all reviews</button>
-             </div>
+                <textarea
+                  className="vp-review-textarea"
+                  placeholder="Share your experience with this creator..."
+                  value={reviewComment}
+                  onChange={(e) => setReviewComment(e.target.value)}
+                  required
+                  rows={3}
+                ></textarea>
+                <button type="submit" className="vp-btn vp-btn-primary" disabled={isSubmittingReview} style={{ marginTop: "1rem" }}>
+                  {isSubmittingReview ? "Submitting..." : "Submit Review"}
+                </button>
+              </form>
+            </div>
+
+            {/* Divider */}
+            <div style={{ width: '100%', height: '1px', backgroundColor: '#333', margin: '2rem 0' }}></div>
+
+            {reviews.length > 0 ? reviews.map((rev) => (
+              <div key={rev._id} className="review-item">
+                <div className="rev-header">
+                  <img src={rev.customerId?.profilePic || "https://via.placeholder.com/40"} alt="user" className="rev-avatar" />
+                  <div className="rev-user-info">
+                    <span className="rev-name">{rev.customerId?.name || "User"}</span>
+                    <span className="rev-stars">{'★'.repeat(rev.rating)}</span>
+                  </div>
+                  <span className="rev-time">{new Date(rev.createdAt).toLocaleDateString()}</span>
+                </div>
+                <p className="rev-text">{rev.comment}</p>
+                <div className="rev-footer-stats">
+                  <span>Helpful</span>
+                </div>
+              </div>
+            )) : (
+              <p style={{ color: '#888', marginTop: '1rem' }}>No reviews yet. Be the first to review!</p>
+            )}
+
+            <div className="vp-view-all-reviews">
+              <button className="vp-btn vp-btn-outline" onClick={handleViewReviews}>View all reviews</button>
+            </div>
           </div>
         </div>
       </div>
-      
+
     </div>
   );
 };

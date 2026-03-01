@@ -17,8 +17,10 @@ const PortfolioImagesPage = ({ userId, setPhotographer }) => {
   useEffect(() => {
     const fetchPhotographer = async () => {
       try {
+        const token = localStorage.getItem("token");
         const res = await axios.get(
-          `${API_URL}/api/photographers/profile/${userId}`
+          `${API_URL}/api/photographers/profile/${userId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         setPhotographerData(res.data.photographer);
         setPhotographer(res.data.photographer);
@@ -52,10 +54,16 @@ const PortfolioImagesPage = ({ userId, setPhotographer }) => {
 
     try {
       setUploading(true);
+      const token = localStorage.getItem("token");
       const res = await axios.post(
         `${API_URL}/api/photographers/portfolio/images`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`
+          }
+        }
       );
 
       setPhotographerData(res.data.photographer);
@@ -74,13 +82,17 @@ const PortfolioImagesPage = ({ userId, setPhotographer }) => {
   };
 
   // Delete image
-  const deleteImage = async (imageUrl) => {
+  const deleteImage = async (public_id) => {
     if (!photographerData?.portfolioImages) return;
 
     try {
+      const token = localStorage.getItem("token");
       const res = await axios.delete(
         `${API_URL}/api/photographers/portfolio/image/delete`,
-        { data: { userId, imageUrl } }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          data: { public_id },
+        },
       );
 
       setPhotographerData(res.data.photographer);
@@ -91,7 +103,6 @@ const PortfolioImagesPage = ({ userId, setPhotographer }) => {
       toast.error("Failed to delete image.");
     }
   };
-
   if (loading) return <p style={{ color: "#b3995e" }}>Loading...</p>;
 
   return (
@@ -124,9 +135,13 @@ const PortfolioImagesPage = ({ userId, setPhotographer }) => {
         <div>
           <h3 style={{ color: "#b3995e", marginTop: "1rem" }}>Images</h3>
           <div className="media-preview">
-            {photographerData.portfolioImages.map((imgUrl, idx) => (
+            {photographerData.portfolioImages.map((img, idx) => (
               <div key={`existing-${idx}`} style={{ position: "relative" }}>
-                <img src={imgUrl} alt={`portfolio-${idx}`} />
+                <img
+                  src={img.url}
+                  alt={`portfolio-${idx}`}
+                  style={{ width: "100%", borderRadius: "6px" }}
+                />
 
                 <button
                   style={{
@@ -140,7 +155,7 @@ const PortfolioImagesPage = ({ userId, setPhotographer }) => {
                     padding: "2px 6px",
                     cursor: "pointer",
                   }}
-                  onClick={() => deleteImage(imgUrl)}
+                  onClick={() => deleteImage(img.public_id)}
                 >
                   X
                 </button>

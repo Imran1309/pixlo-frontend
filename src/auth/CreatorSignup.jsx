@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import creatorsignup from "../assets/creatorsingup.jpg"; // Using confirmed filename with typo
 import "./CreatorSignup.css";
+import { useGoogleLogin } from "@react-oauth/google";
 
 const CreatorSignup = () => {
   const navigate = useNavigate();
@@ -58,6 +59,35 @@ const CreatorSignup = () => {
     }
   };
 
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
+        const res = await fetch(`${API}/api/auth/google-login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ access_token: tokenResponse.access_token, role: "photographer" }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          alert(data.message || "Google Login failed");
+          return;
+        }
+
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        navigate("/profile");
+      } catch (err) {
+        console.error(err);
+        alert("Server error. Try again later.");
+      }
+    },
+    onError: () => alert("Google Login Failed"),
+  });
+
   return (
     <div className="creator-signup-page">
       <button className="back-btn" onClick={() => navigate("/creator-login")}>
@@ -75,6 +105,39 @@ const CreatorSignup = () => {
                 Login here
               </span>
             </p>
+          </div>
+
+          <div className="creator-social-row" style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+            <button
+              type="button"
+              className="creator-social-btn google"
+              onClick={() => handleGoogleLogin()}
+              style={{
+                width: '100%',
+                padding: '0.8rem',
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                background: '#fff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '10px',
+                cursor: 'pointer',
+                fontWeight: '600'
+              }}
+            >
+              <img
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                alt="Google"
+                style={{ width: '20px' }}
+              />
+              Sign up with Google
+            </button>
+          </div>
+
+          <div className="creator-divider" style={{ textAlign: 'center', margin: '1rem 0', position: 'relative' }}>
+            <span style={{ background: '#fff', padding: '0 10px', color: '#888', fontSize: '0.9rem' }}>OR</span>
+            <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', background: '#eee', zIndex: -1 }}></div>
           </div>
 
           <form className="creator-signup-form" onSubmit={handleSubmit}>

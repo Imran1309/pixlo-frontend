@@ -18,7 +18,10 @@ const PortfolioVideosPage = ({ userId, setPhotographer }) => {
   useEffect(() => {
     const fetchPhotographer = async () => {
       try {
-        const res = await axios.get(`${API}/api/photographers/profile/${userId}`);
+        const token = localStorage.getItem("token");
+        const res = await axios.get(`${API}/api/photographers/profile/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         setPhotographerData(res.data.photographer);
         setPhotographer(res.data.photographer);
       } catch (err) {
@@ -39,11 +42,13 @@ const PortfolioVideosPage = ({ userId, setPhotographer }) => {
     try {
       setUploading(true);
 
+      const token = localStorage.getItem("token");
       const res = await axios.post(`${API}/api/photographers/portfolio/video`, {
-        userId,
         videoLink,
         title,
         description,
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
       });
 
       setPhotographerData(res.data.photographer);
@@ -65,8 +70,10 @@ const PortfolioVideosPage = ({ userId, setPhotographer }) => {
   // Delete video
   const deleteVideo = async (videoId) => {
     try {
+      const token = localStorage.getItem("token");
       const res = await axios.delete(`${API}/api/photographers/portfolio/video/delete`, {
-        data: { userId, videoId },
+        headers: { Authorization: `Bearer ${token}` },
+        data: { videoId },
       });
 
       setPhotographerData(res.data.photographer);
@@ -87,10 +94,12 @@ const PortfolioVideosPage = ({ userId, setPhotographer }) => {
     try {
       setUploading(true);
 
+      const token = localStorage.getItem("token");
       const res = await axios.put(`${API}/api/photographers/portfolio/video/edit`, {
-        userId,
         videoId: editVideo._id,
         updatedVideo: editVideo,
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
       });
 
       setPhotographerData(res.data.photographer);
