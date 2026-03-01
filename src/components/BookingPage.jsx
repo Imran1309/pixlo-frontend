@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./BookingPage.css";
 
+const RAZORPAY_KEY_ID = import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_Qi1InUYyVMLZdY";
 const OPENCAGE_API_KEY = import.meta.env.VITE_OPENCAGE_API_KEY;
 
 const BookingPage = () => {
@@ -39,11 +40,22 @@ const BookingPage = () => {
   const [timeAmPm, setTimeAmPm] = useState("AM");
 
   const [currentDisplayDate, setCurrentDisplayDate] = useState(new Date());
-  
-  const [showPin, setShowPin] = useState(false);
-  const [cardPin, setCardPin] = useState(["", "", "", ""]);
-  const [paymentMethod, setPaymentMethod] = useState("card");
+
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [confirmedBookingDetails, setConfirmedBookingDetails] = useState(null);
+
+  const amount = service?.priceINR || service?.price || 2000;
+
+  // Load Razorpay script dynamically
+  useEffect(() => {
+    if (!document.getElementById("razorpay-script")) {
+      const script = document.createElement("script");
+      script.id = "razorpay-script";
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
 
   React.useEffect(() => {
     let hr = parseInt(timeHour, 10);
@@ -64,14 +76,14 @@ const BookingPage = () => {
     const yyyy = newDate.getFullYear();
     const mm = String(newDate.getMonth() + 1).padStart(2, '0');
     const dd = String(newDate.getDate()).padStart(2, '0');
-    setFormData(prev => ({...prev, eventDate: `${yyyy}-${mm}-${dd}`}));
+    setFormData(prev => ({ ...prev, eventDate: `${yyyy}-${mm}-${dd}` }));
   };
 
   const handleCalendarMonthScroll = (offset) => {
     setCurrentDisplayDate(prev => {
-        const d = new Date(prev);
-        d.setMonth(d.getMonth() + offset);
-        return d;
+      const d = new Date(prev);
+      d.setMonth(d.getMonth() + offset);
+      return d;
     });
   };
 
@@ -151,23 +163,25 @@ const BookingPage = () => {
     );
   };
 
-  const handleRazorpayPayment = (order, booking) => {
+  const handleRazorpayPayment = (order, booking, preferQR = false) => {
     if (!order || !window.Razorpay) {
-      alert("Unable to initiate payment.");
+      alert("Payment gateway not loaded. Please refresh and try again.");
+      setLoading(false);
       return;
     }
 
     const options = {
-      key: "rzp_test_Qi1InUYyVMLZdY",
+      key: RAZORPAY_KEY_ID,
       amount: order.amount,
-      currency: order.currency,
+      currency: order.currency || "INR",
       name: "Pixlo",
       description: `Booking for ${service?.serviceName}`,
       order_id: order.id,
       handler: async function (response) {
         try {
+          setLoading(true);
           const verifyRes = await axios.post(
-            `${API_URL}/api/bookings/verify-payment`, // ✅ updated
+            `${API_URL}/api/bookings/verify-payment`,
             {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
@@ -177,13 +191,17 @@ const BookingPage = () => {
           );
 
           if (verifyRes.data.success) {
+            setConfirmedBookingDetails(verifyRes.data.booking);
             setPaymentSuccess(true);
+            setLoading(false);
           } else {
-            alert("Payment verification failed.");
+            alert("Payment verification failed. Please contact support.");
+            setLoading(false);
           }
         } catch (err) {
           console.error("Payment verification error:", err);
-          alert("Payment verification failed.");
+          alert("Payment verification failed. Please contact support.");
+          setLoading(false);
         }
       },
       prefill: {
@@ -194,7 +212,30 @@ const BookingPage = () => {
       theme: {
         color: "#c29d5b",
       },
+      modal: {
+        ondismiss: function () {
+          setLoading(false);
+          alert("Payment was cancelled. Your booking is pending payment.");
+        },
+      },
     };
+
+    if (preferQR) {
+      options.config = {
+        display: {
+          blocks: {
+            upi: {
+              name: "Pay with QR Code",
+              instruments: [
+                { method: "upi" }
+              ]
+            }
+          },
+          sequence: ["block.upi"],
+          preferences: { show_default_blocks: true }
+        }
+      };
+    }
 
     const rzp = new window.Razorpay(options);
     rzp.open();
@@ -225,34 +266,12 @@ const BookingPage = () => {
       if (res.data.success) {
         const { order, booking } = res.data;
 
-        // Skip Razorpay dashboard completely and open UPI intent if on mobile and using mobile banking/UPI
-        if ((paymentMethod === "bank" || paymentMethod === "transfer") && /Android|iPhone/i.test(navigator.userAgent)) {
-           const upiID = photographer?.upiId || "rzp_test@razorpay"; // Fallback to a test UPI if creator has none
-           const upiUrl = `upi://pay?pa=${upiID}&pn=${photographer?.userId?.name || photographer?.name || "Creator"}&am=${service?.priceINR || service?.price || 2000}&cu=INR&tn=Booking for ${service?.serviceName}`;
-           
-           // Automatically complete the backend status for demonstration purposes since we broke out of Razorpay
-           alert("Opening Mobile Banking App...");
-           window.location.href = upiUrl;
-           
-           setTimeout(() => {
-              setPaymentSuccess(true);
-           }, 2000);
-           
-        } else if (order) {
-           if (order.isFake) {
-              // Bypass Razorpay SDK and simulate payment success
-              setTimeout(() => {
-                 setPaymentSuccess(true);
-                 setLoading(false);
-              }, 1000);
-           } else {
-              handleRazorpayPayment(order, booking);
-              setLoading(false);
-           }
+        // Open Razorpay — booking only confirmed after payment verification
+        if (order) {
+          handleRazorpayPayment(order, booking, amount <= 100000);
         } else {
-          alert("Razorpay order not generated.");
+          alert("Failed to create payment order.");
           setLoading(false);
-          // Only navigate back if we must to retry, but maybe keep user on page: navigate(`/photographer/${photographerId}`);
         }
       } else {
         alert(res.data.message || "Booking failed.");
@@ -271,9 +290,8 @@ const BookingPage = () => {
         <div className="payment-success-content">
           <div className="success-icon-container">
             <div className="success-circle">
-               <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-check"><path d="M20 6 9 17l-5-5"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-check"><path d="M20 6 9 17l-5-5" /></svg>
             </div>
-            {/* Minimal CSS Confetti dots */}
             <div className="confetti-dot dot-1"></div>
             <div className="confetti-dot dot-2"></div>
             <div className="confetti-dot dot-3"></div>
@@ -281,9 +299,35 @@ const BookingPage = () => {
             <div className="confetti-dot dot-5"></div>
             <div className="confetti-dot dot-6"></div>
           </div>
-          <h2 className="success-text">Payment Successful!</h2>
+          <h2 className="success-text">Booking Confirmed!</h2>
+          <p style={{ color: "#aaa", margin: "0.5rem 0 1.5rem", fontSize: "0.95rem" }}>
+            Your payment was successful and the booking is confirmed.
+          </p>
+
+          {confirmedBookingDetails && (
+            <div style={{ background: "#222", padding: "1.5rem", borderRadius: "8px", textAlign: "left", marginBottom: "1.5rem", width: "100%", maxWidth: "300px", margin: "0 auto 1.5rem auto" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+                <span style={{ color: "#888" }}>Booking ID:</span>
+                <span style={{ color: "#fff", fontWeight: "bold" }}>#{confirmedBookingDetails._id.substring(0, 8)}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+                <span style={{ color: "#888" }}>Amount Paid:</span>
+                <span style={{ color: "#CBB26A", fontWeight: "bold" }}>₹{confirmedBookingDetails.amount}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+                <span style={{ color: "#888" }}>Date:</span>
+                <span style={{ color: "#fff" }}>{new Date(confirmedBookingDetails.eventDate).toLocaleDateString()}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#888" }}>Time:</span>
+                <span style={{ color: "#fff" }}>{confirmedBookingDetails.eventTime}</span>
+              </div>
+            </div>
+          )}
+
         </div>
-        <button className="return-home-btn" onClick={() => navigate("/")}>RETURN</button>
+        <button className="return-home-btn" onClick={() => navigate("/my-bookings")}>VIEW MY BOOKINGS</button>
+        <button style={{ background: "transparent", color: "#888", border: "none", marginTop: "0.75rem", cursor: "pointer", fontSize: "0.9rem" }} onClick={() => navigate("/")}>Return to Home</button>
       </div>
     );
   }
@@ -432,10 +476,10 @@ const BookingPage = () => {
                         <div className="cal-date-header">
                           {formData.eventDate
                             ? new Date(formData.eventDate).toLocaleDateString("en-US", {
-                                month: "short",
-                                day: "2-digit",
-                                weekday: "long",
-                              }).replace(" ", " ")
+                              month: "short",
+                              day: "2-digit",
+                              weekday: "long",
+                            }).replace(" ", " ")
                             : "Select a date"}
                         </div>
                         <div className="cal-weekdays">
@@ -464,28 +508,28 @@ const BookingPage = () => {
                   <div className="bk-input-group text-white-label time-wrapper">
                     <label>Time</label>
                     <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', backgroundColor: '#fff', borderRadius: '8px', padding: '0.75rem 1rem' }}>
-                      <select 
-                        value={timeHour} 
+                      <select
+                        value={timeHour}
                         onChange={(e) => setTimeHour(e.target.value)}
                         style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '1rem', color: '#000', cursor: 'pointer', appearance: 'none', fontWeight: '500' }}
                       >
-                        {Array.from({length: 12}, (_, i) => {
-                           const h = String(i + 1).padStart(2, '0');
-                           return <option key={h} value={h}>{h}</option>;
+                        {Array.from({ length: 12 }, (_, i) => {
+                          const h = String(i + 1).padStart(2, '0');
+                          return <option key={h} value={h}>{h}</option>;
                         })}
                       </select>
-                      <span style={{color: '#000', fontWeight: 'bold'}}>:</span>
-                      <select 
-                        value={timeMinute} 
+                      <span style={{ color: '#000', fontWeight: 'bold' }}>:</span>
+                      <select
+                        value={timeMinute}
                         onChange={(e) => setTimeMinute(e.target.value)}
                         style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '1rem', color: '#000', cursor: 'pointer', appearance: 'none', fontWeight: '500' }}
                       >
                         {["00", "15", "30", "45"].map(m => (
-                           <option key={m} value={m}>{m}</option>
+                          <option key={m} value={m}>{m}</option>
                         ))}
                       </select>
-                      <select 
-                        value={timeAmPm} 
+                      <select
+                        value={timeAmPm}
                         onChange={(e) => setTimeAmPm(e.target.value)}
                         style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '1rem', color: '#000', marginLeft: 'auto', cursor: 'pointer', appearance: 'none', fontWeight: '600' }}
                       >
@@ -568,113 +612,31 @@ const BookingPage = () => {
               <div className="step3-layout">
                 {/* Left Side: Payment Form */}
                 <div className="step3-left">
-                  <h2 className="step3-title">Payment</h2>
+                  <h2 className="step3-title">Complete Payment</h2>
                   <div className="step3-divider"></div>
 
-                  <div className="payment-options">
-                    <span className="pay-with-label">Pay With:</span>
-                    <label className="pay-radio">
-                      <input type="radio" name="paymentMethod" value="card" checked={paymentMethod === "card"} onChange={() => { setPaymentMethod("card"); setShowPin(false); }} />
-                      Card
-                    </label>
-                    <label className="pay-radio">
-                      <input type="radio" name="paymentMethod" value="bank" checked={paymentMethod === "bank"} onChange={() => { setPaymentMethod("bank"); setShowPin(false); }} />
-                      Bank
-                    </label>
-                    <label className="pay-radio">
-                      <input type="radio" name="paymentMethod" value="transfer" checked={paymentMethod === "transfer"} onChange={() => { setPaymentMethod("transfer"); setShowPin(false); }} />
-                      Transfer
-                    </label>
+                  <div className="payment-instructions">
+                    <p style={{ color: "#eee", fontSize: "1rem", lineHeight: "1.6", marginBottom: "1.5rem" }}>
+                      You will be redirected to our secure <strong>Razorpay</strong> checkout gateway.
+                    </p>
+                    <ul style={{ color: "#aaa", fontSize: "0.9rem", lineHeight: "1.8", marginBottom: "2rem", listStyleType: "none", paddingLeft: "10px" }}>
+                      <li><span className="check-icon" style={{ color: "#CBB26A", marginRight: "10px" }}>✓</span> Pay instantly using UPI, PhonePe, or GPay {amount <= 100000 && "(QR code available)"}</li>
+                      <li><span className="check-icon" style={{ color: "#CBB26A", marginRight: "10px" }}>✓</span> All major Credit and Debit Cards accepted</li>
+                      <li><span className="check-icon" style={{ color: "#CBB26A", marginRight: "10px" }}>✓</span> Supports Netbanking across all top Indian banks</li>
+                    </ul>
                   </div>
 
-                  {!showPin ? (
-                    <>
-                      {paymentMethod === "card" && (
-                        <>
-                          <div className="bk-form-col">
-                            <label className="step3-label">Card Number</label>
-                            <input type="text" className="step3-input" placeholder="1234  5678  9101  1121" />
-                          </div>
+                  <button
+                    className="step3-pay-btn"
+                    onClick={handleBooking}
+                    disabled={loading}
+                    style={{ fontSize: "1.1rem", padding: "1rem", marginTop: "1rem" }}
+                  >
+                    {loading ? "Processing Payment..." : `Proceed to Pay ₹${amount}`}
+                  </button>
 
-                          <div className="bk-form-row">
-                            <div className="bk-form-col">
-                              <label className="step3-label">Expiration Date</label>
-                              <input type="text" className="step3-input" placeholder="MM/YY" />
-                            </div>
-                            <div className="bk-form-col">
-                              <label className="step3-label">CVV</label>
-                              <input type="text" className="step3-input" placeholder="123" />
-                            </div>
-                          </div>
-
-                          <label className="save-card-label">
-                            <input type="checkbox" />
-                            Save card details
-                          </label>
-                        </>
-                      )}
-
-                      {paymentMethod === "bank" && (
-                        <>
-                          <div className="bk-form-col">
-                            <label className="step3-label">Bank App or Netbanking</label>
-                            <select className="step3-input" style={{ backgroundColor: '#fff', color: '#000', padding: '0.75rem 1rem', borderRadius: '8px', width: '100%', marginTop: '0.5rem', marginBottom: '1.5rem', fontWeight: 500 }}>
-                               <option value="">Select your bank</option>
-                               <option value="sbi">State Bank of India</option>
-                               <option value="hdfc">HDFC Bank</option>
-                               <option value="icici">ICICI Bank</option>
-                               <option value="axis">Axis Bank</option>
-                            </select>
-                          </div>
-                        </>
-                      )}
-
-                      {paymentMethod === "transfer" && (
-                        <>
-                          <div className="bk-form-col">
-                            <label className="step3-label">UPI ID / VPA</label>
-                            <input type="text" className="step3-input" placeholder="e.g. 9876543210@ybl" style={{ marginTop: '0.5rem', marginBottom: '1.5rem' }} />
-                          </div>
-                        </>
-                      )}
-
-                      <button className="step3-pay-btn" onClick={() => paymentMethod === "card" ? setShowPin(true) : handleBooking()} disabled={loading}>
-                         {loading ? "Processing..." : `Pay ₹${service?.priceINR || service?.price || 2000}`}
-                      </button>
-                    </>
-                  ) : (
-                    <div className="pin-confirmation-block">
-                      <p className="pin-prompt">Enter your 4-digit card pin to confirm this payment</p>
-                      <div className="pin-inputs-row">
-                        {[0, 1, 2, 3].map((idx) => (
-                          <input 
-                            key={idx}
-                            id={`pin-input-${idx}`}
-                            type="password"
-                            maxLength={1}
-                            className="pin-box"
-                            value={cardPin[idx]}
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              const newPin = [...cardPin];
-                              newPin[idx] = val;
-                              setCardPin(newPin);
-                              if (val && idx < 3) {
-                                document.getElementById(`pin-input-${idx+1}`)?.focus();
-                              }
-                            }}
-                          />
-                        ))}
-                      </div>
-                      
-                      <button className="step3-pay-btn" onClick={handleBooking} disabled={loading}>
-                        {loading ? "Processing..." : "Confirm Payment"}
-                      </button>
-                    </div>
-                  )}
-
-                  <p className="step3-disclaimer">
-                     Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our privacy policy.
+                  <p className="step3-disclaimer" style={{ marginTop: "2rem" }}>
+                    Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our privacy policy.
                   </p>
                 </div>
 
@@ -684,10 +646,10 @@ const BookingPage = () => {
                   <div className="step3-divider"></div>
 
                   <div className="order-photographer-info">
-                    <img 
-                      src={photographer?.userId?.profilePic || "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"} 
-                      alt="Photographer" 
-                      className="order-photo" 
+                    <img
+                      src={photographer?.userId?.profilePic || "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"}
+                      alt="Photographer"
+                      className="order-photo"
                     />
                     <div className="order-details-text">
                       <h4>{photographer?.userId?.name || photographer?.name || "Creator"}</h4>
@@ -701,8 +663,8 @@ const BookingPage = () => {
                   <div className="step3-divider"></div>
 
                   <div className="discount-row">
-                     <input type="text" className="step3-input flex-input" placeholder="Gift or discount code" />
-                     <button className="apply-btn">Apply</button>
+                    <input type="text" className="step3-input flex-input" placeholder="Gift or discount code" />
+                    <button className="apply-btn">Apply</button>
                   </div>
 
                   <div className="step3-divider"></div>

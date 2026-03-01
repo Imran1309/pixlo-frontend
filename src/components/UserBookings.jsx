@@ -23,21 +23,25 @@ const UserBookings = () => {
       }
 
       try {
-        const API = import.meta.env.VITE_API_URL;
+        const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-        // fetch bookings and reviews in parallel
-        const [bookingsRes, reviewsRes] = await Promise.all([
-          axios.get(`${API}/api/bookings/history?userId=${user._id}`),
-          axios.get(`${API}/api/reviews?customerId=${user._id}`)
-        ]);
+        // fetch bookings using correct endpoint
+        const bookingsRes = await axios.get(`${API}/api/bookings/my-bookings?customerId=${user._id}`);
 
         if (!isMounted) return;
 
         if (bookingsRes.data.success) setBookings(bookingsRes.data.bookings);
-        if (reviewsRes.data.success) setReviews(reviewsRes.data.reviews);
+
+        // Try to fetch reviews (non-critical)
+        try {
+          const reviewsRes = await axios.get(`${API}/api/reviews?customerId=${user._id}`);
+          if (reviewsRes.data.success) setReviews(reviewsRes.data.reviews);
+        } catch (reviewErr) {
+          // Reviews endpoint may not exist yet, not critical
+          console.warn("Reviews endpoint not available");
+        }
       } catch (err) {
-        console.error("Error fetching data:", err);
-        alert("Error loading bookings or reviews. Please try again later.");
+        console.error("Error fetching bookings:", err);
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -134,9 +138,8 @@ const UserBookings = () => {
               <p className="status-section">
                 <strong>Status:</strong>
                 <span
-                  className={`status-badge ${
-                    booking.status?.toLowerCase() || "pending"
-                  }`}
+                  className={`status-badge ${booking.status?.toLowerCase() || "pending"
+                    }`}
                 >
                   {booking.status
                     ? booking.status[0].toUpperCase() + booking.status.slice(1)
