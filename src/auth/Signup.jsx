@@ -3,18 +3,20 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import carousel2 from "../assets/carousel2.jpg";
 import "./Signup.css";
+import { useGoogleLogin } from "@react-oauth/google";
 
 const Signup = () => {
   const navigate = useNavigate();
-  const [role, setRole] = useState("customer"); 
-  const [step, setStep] = useState("signup"); 
+  const [role, setRole] = useState("customer");
+  const [step, setStep] = useState("signup");
   const [formData, setFormData] = useState({ name: "", email: "", password: "", confirmPassword: "" });
   const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const API = import.meta.env.VITE_API_URL;
+  const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  Elephant
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -37,7 +39,7 @@ const Signup = () => {
       if (!res.ok) return setMessage(data.message || "Signup failed");
 
       setMessage(data.message);
-      setStep("verify"); 
+      setStep("verify");
     } catch (err) {
       console.error(err);
       setMessage("Server error. Try again later.");
@@ -64,6 +66,29 @@ const Signup = () => {
       setMessage("Server error. Try again later.");
     }
   };
+
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const res = await fetch(`${API}/api/auth/google-login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ access_token: tokenResponse.access_token, role }),
+        });
+        const data = await res.json();
+        if (!res.ok) return setMessage(data.message || "Google Login failed");
+
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        setMessage("Login successful!");
+        navigate("/");
+      } catch (err) {
+        console.error(err);
+        setMessage("Server error. Try again later.");
+      }
+    },
+    onError: () => setMessage("Google Login Failed"),
+  });
 
   return (
     <div className="signup-page">
@@ -160,14 +185,14 @@ const Signup = () => {
               <button type="submit" className="signup-submit">
                 Sign Up
               </button>
-              
-              <button type="button" className="google-signin-button">
-                <img 
-                  src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
-                  alt="Google" 
+
+              <button type="button" className="google-signin-button" onClick={() => handleGoogleLogin()}>
+                <img
+                  src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                  alt="Google"
                   className="google-icon"
                 />
-                Sign in with Google
+                Sign up with Google
               </button>
             </form>
           ) : (

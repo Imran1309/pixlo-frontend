@@ -832,6 +832,50 @@
   .cal-bg-curve {
     width: 200%;
   }
+
+  .custom-calendar-card {
+    flex-direction: column;
+    height: auto;
+    min-height: 500px;
+  }
+
+  .cal-left-panel {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  .cal-year {
+    margin: 0;
+  }
+
+  .cal-months {
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .cal-title-bottom {
+    display: none;
+  }
+
+  .cal-right-panel {
+    width: 100%;
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .return-home-btn {
+    position: static;
+    margin-top: 2rem;
+    width: 100%;
+  }
+
+  .bk-page-wrapper {
+    padding: 2rem 1rem;
+  }
 }
 
 /* --- Payment Success Screen --- */

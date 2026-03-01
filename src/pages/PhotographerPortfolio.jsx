@@ -48,7 +48,7 @@ const PhotographerPortfolio = () => {
         }
 
         const res = await axios.get(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/photographers/profile/${userId}`
+          `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/photographers/profile/${userId}`,
         );
         setPhotographer(res.data.photographer);
 
@@ -83,13 +83,13 @@ const PhotographerPortfolio = () => {
   };
 
   const handleTypeChange = (type) => {
-    setForm(prev => ({ ...prev, typeOfWork: type }));
+    setForm((prev) => ({ ...prev, typeOfWork: type }));
   };
 
   const handleSpecialization = (spec) => {
     setForm((prev) => {
       const specs = prev.specialization.includes(spec)
-        ? prev.specialization.filter(item => item !== spec)
+        ? prev.specialization.filter((item) => item !== spec)
         : [...prev.specialization, spec];
 
       // Limit to 5
@@ -116,26 +116,26 @@ const PhotographerPortfolio = () => {
         try {
           const geoRes = await fetch(
             `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(form.location)}&limit=1`,
-            { headers: { 'User-Agent': 'Pixlo App' } }
+            { headers: { "User-Agent": "Pixlo App" } },
           );
           const geoData = await geoRes.json();
           if (geoData && geoData.length > 0) {
             const { lat, lon } = geoData[0];
             locationPayload = {
-              type: 'Point',
-              coordinates: [parseFloat(lon), parseFloat(lat)]
+              type: "Point",
+              coordinates: [parseFloat(lon), parseFloat(lat)],
             };
           }
         } catch (geoErr) {
-          console.warn('Geocoding failed:', geoErr.message);
+          console.warn("Geocoding failed:", geoErr.message);
         }
       }
 
       // Use manual lat/lng if provided, override geocoded
       if (form.latitude && form.longitude) {
         locationPayload = {
-          type: 'Point',
-          coordinates: [parseFloat(form.longitude), parseFloat(form.latitude)]
+          type: "Point",
+          coordinates: [parseFloat(form.longitude), parseFloat(form.latitude)],
         };
       }
 
@@ -152,9 +152,11 @@ const PhotographerPortfolio = () => {
       }
 
       await axios.post(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/photographers/profile`,
+        `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/photographers/profile`,
         payload,
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        },
       );
 
       navigate("/portfolio/media");
@@ -164,12 +166,24 @@ const PhotographerPortfolio = () => {
     }
   };
 
-  if (loading) return <div style={{ background: '#000', height: '100vh', color: 'white' }}>Loading...</div>;
+  if (loading)
+    return (
+      <div style={{ background: "#000", height: "100vh", color: "white" }}>
+        Loading...
+      </div>
+    );
 
   const specializationsList = [
-    "Portrait", "Wedding", "Event",
-    "Commercial", "Product", "Landscape",
-    "Documentary", "Aerial/Drone", "Fashion", "Instagram Reels"
+    "Portrait",
+    "Wedding",
+    "Event",
+    "Commercial",
+    "Product",
+    "Landscape",
+    "Documentary",
+    "Aerial/Drone",
+    "Fashion",
+    "Instagram Reels",
   ];
 
   return (
@@ -178,8 +192,13 @@ const PhotographerPortfolio = () => {
       <div className="portfolio-header">
         <div className="header-left">
           {/* <ChevronLeft size={30} style={{cursor:'pointer', color:'#fff'}} onClick={() => navigate(-1)} /> */}
-          <img src={logo} alt="Pixlo" className="header-logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }} />
-
+          <img
+            src={logo}
+            alt="Pixlo"
+            className="header-logo"
+            onClick={() => navigate("/")}
+            style={{ cursor: "pointer" }}
+          />
         </div>
         <h2>About you</h2>
         <div className="header-right">
@@ -190,11 +209,12 @@ const PhotographerPortfolio = () => {
       </div>
 
       <div className="about-content">
-
         {/* Bio Section */}
         <div className="form-section">
           <h3>Short Bio/Introduction</h3>
-          <p className="sub-label">Share your story,and what makes you unique as a creator</p>
+          <p className="sub-label">
+            Share your story,and what makes you unique as a creator
+          </p>
           <div className="rich-text-area">
             <div className="rich-text-toolbar">
               <span>Roboto</span>
@@ -210,7 +230,6 @@ const PhotographerPortfolio = () => {
         </div>
 
         <div className="form-row-grid">
-
           {/* Experience */}
           <div className="form-group">
             <h3>Years Of Experience</h3>
@@ -223,8 +242,31 @@ const PhotographerPortfolio = () => {
                 min="0"
               />
               <div className="spinners">
-                <button type="button" onClick={() => setForm(p => ({ ...p, yearsOfExperience: Number(p.yearsOfExperience) + 1 }))}>▲</button>
-                <button type="button" onClick={() => setForm(p => ({ ...p, yearsOfExperience: Math.max(0, Number(p.yearsOfExperience) - 1) }))}>▼</button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setForm((p) => ({
+                      ...p,
+                      yearsOfExperience: Number(p.yearsOfExperience) + 1,
+                    }))
+                  }
+                >
+                  ▲
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setForm((p) => ({
+                      ...p,
+                      yearsOfExperience: Math.max(
+                        0,
+                        Number(p.yearsOfExperience) - 1,
+                      ),
+                    }))
+                  }
+                >
+                  ▼
+                </button>
               </div>
             </div>
           </div>
@@ -236,7 +278,10 @@ const PhotographerPortfolio = () => {
               <label className="custom-checkbox">
                 <input
                   type="checkbox"
-                  checked={form.typeOfWork === "Photographer" || form.typeOfWork === "Both"}
+                  checked={
+                    form.typeOfWork === "Photographer" ||
+                    form.typeOfWork === "Both"
+                  }
                   onChange={() => handleTypeChange("Photographer")}
                 />
                 <span className="checkmark"></span>
@@ -245,7 +290,10 @@ const PhotographerPortfolio = () => {
               <label className="custom-checkbox">
                 <input
                   type="checkbox"
-                  checked={form.typeOfWork === "Videographer" || form.typeOfWork === "Both"}
+                  checked={
+                    form.typeOfWork === "Videographer" ||
+                    form.typeOfWork === "Both"
+                  }
                   onChange={() => handleTypeChange("Videographer")}
                 />
                 <span className="checkmark"></span>
@@ -279,16 +327,15 @@ const PhotographerPortfolio = () => {
               <option value="Chennai">Chennai</option>
             </select>
           </div>
-
         </div>
 
         {/* Specialization */}
         <div className="form-section">
-          <h3>Years Of Experience</h3> {/* Keeping title as per screenshot even if it seems duplicate/typo */}
+          <h3>Years Of Experience</h3>{" "}
+          {/* Keeping title as per screenshot even if it seems duplicate/typo */}
           <p className="sub-label">Select up to 5 areas you specialize in</p>
-
           <div className="specialization-grid">
-            {specializationsList.map(spec => (
+            {specializationsList.map((spec) => (
               <label key={spec} className="custom-checkbox">
                 <input
                   type="checkbox"
@@ -304,10 +351,13 @@ const PhotographerPortfolio = () => {
 
         {/* Footer Buttons */}
         <div className="form-footer">
-          <button className="btn-back" onClick={() => navigate('/profile')}>Back</button>
-          <button className="btn-continue" onClick={handleSubmit}>Continue</button>
+          <button className="btn-back" onClick={() => navigate("/profile")}>
+            Back
+          </button>
+          <button className="btn-continue" onClick={handleSubmit}>
+            Continue
+          </button>
         </div>
-
       </div>
     </div>
   );

@@ -111,6 +111,22 @@ const ViewProfile = () => {
   const name = photographer.userId?.name || "Photographer Name";
   const intro = photographer.introduction || photographer.typeOfWork || "Professional Photographer";
 
+  const getEmbedUrl = (url) => {
+    if (!url) return "";
+    let videoId = "";
+    if (url.includes("youtube.com/watch?v=")) {
+      videoId = url.split("v=")[1].split("&")[0];
+      return `https://www.youtube.com/embed/${videoId}`;
+    } else if (url.includes("youtu.be/")) {
+      videoId = url.split("youtu.be/")[1].split("?")[0];
+      return `https://www.youtube.com/embed/${videoId}`;
+    } else if (url.includes("vimeo.com/")) {
+      videoId = url.split("vimeo.com/")[1].split("?")[0];
+      return `https://player.vimeo.com/video/${videoId}`;
+    }
+    return url;
+  };
+
   return (
     <div className="vp-page-container">
       {/* Top Header Section */}
@@ -170,7 +186,7 @@ const ViewProfile = () => {
                 <iframe
                   width="100%"
                   height="220"
-                  src={video.videoLink?.replace("watch?v=", "embed/")}
+                  src={getEmbedUrl(video.videoLink || video.link || "")}
                   allowFullScreen
                   title={video.title || "Portfolio Video"}
                   style={{ borderRadius: "12px", border: "none" }}

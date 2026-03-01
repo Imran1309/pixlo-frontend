@@ -17,8 +17,10 @@ const PortfolioImagesPage = ({ userId, setPhotographer }) => {
   useEffect(() => {
     const fetchPhotographer = async () => {
       try {
+        const token = localStorage.getItem("token");
         const res = await axios.get(
           `${API_URL}/api/photographers/profile/${userId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         setPhotographerData(res.data.photographer);
         setPhotographer(res.data.photographer);
@@ -52,10 +54,16 @@ const PortfolioImagesPage = ({ userId, setPhotographer }) => {
 
     try {
       setUploading(true);
+      const token = localStorage.getItem("token");
       const res = await axios.post(
         `${API_URL}/api/photographers/portfolio/images`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } },
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`
+          }
+        }
       );
 
       setPhotographerData(res.data.photographer);
@@ -78,10 +86,12 @@ const PortfolioImagesPage = ({ userId, setPhotographer }) => {
     if (!photographerData?.portfolioImages) return;
 
     try {
+      const token = localStorage.getItem("token");
       const res = await axios.delete(
         `${API_URL}/api/photographers/portfolio/image/delete`,
         {
-          data: { userId, public_id },
+          headers: { Authorization: `Bearer ${token}` },
+          data: { public_id },
         },
       );
 

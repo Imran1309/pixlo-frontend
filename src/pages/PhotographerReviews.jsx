@@ -15,7 +15,7 @@ const PhotographerReviews = () => {
         const API_URL = import.meta.env.VITE_API_URL; // 👈 backend URL from .env
 
         const res = await axios.get(
-          `${API_URL}/api/reviews/photographer/${photographerId}`
+          `${API_URL}/api/reviews/photographer/${photographerId}`,
         );
 
         if (res.data.success) {

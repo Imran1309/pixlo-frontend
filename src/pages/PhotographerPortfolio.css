@@ -4,7 +4,7 @@
   background-color: #000;
   min-height: 100vh;
   color: #fff;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   padding-bottom: 2rem;
 }
 
@@ -221,11 +221,11 @@ h3 {
   border-radius: 4px;
 }
 
-.custom-checkbox:hover input~.checkmark {
+.custom-checkbox:hover input ~ .checkmark {
   border-color: #999;
 }
 
-.custom-checkbox input:checked~.checkmark {
+.custom-checkbox input:checked ~ .checkmark {
   background-color: transparent;
   border-color: #fff;
 }
@@ -236,7 +236,7 @@ h3 {
   display: none;
 }
 
-.custom-checkbox input:checked~.checkmark:after {
+.custom-checkbox input:checked ~ .checkmark:after {
   display: block;
 }
 
@@ -308,7 +308,7 @@ h3 {
 }
 
 .btn-continue {
-  background: #CBB26A;
+  background: #cbb26a;
   /* Gold */
   color: #000;
   border: none;

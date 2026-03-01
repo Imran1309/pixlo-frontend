@@ -228,7 +228,9 @@
   border: 1px solid #333;
   border-radius: 16px;
   overflow: hidden;
-  transition: transform 0.3s ease, border-color 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .creator-card-new:hover {
@@ -382,22 +384,32 @@
 }
 
 @media (max-width: 900px) {
+  .creators-page {
+    padding: 1rem;
+  }
+
   .creators-layout {
     flex-direction: column;
   }
 
   .filters-sidebar {
     width: 100%;
+    order: 2;
+    /* Show grid first or filters? Usually grid first on mobile is better if filters are long */
     box-sizing: border-box;
   }
 
+  .creators-content {
+    order: 1;
+    width: 100%;
+  }
+
   .search-filter-bar {
-    flex-direction: column;
-    align-items: center;
+    margin-bottom: 2rem;
   }
 
   .search-pill {
-    width: 90%;
+    width: 100%;
     flex-direction: column;
     padding: 1rem;
     gap: 1rem;
@@ -413,6 +425,10 @@
     justify-content: space-between;
     padding: 0.5rem;
     border-bottom: 1px solid #eee;
+  }
+
+  .search-item:last-child {
+    border-bottom: none;
   }
 }
 
