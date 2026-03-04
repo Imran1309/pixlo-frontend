@@ -11,49 +11,63 @@ const UserBookings = () => {
   const navigate = useNavigate();
 
   const user = JSON.parse(localStorage.getItem("user")) || null;
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    let isMounted = true; // prevent state update on unmounted component
+    if (!user?._id) {
+      alert("Please login to view your bookings.");
+      setLoading(false);
+      return;
+    }
 
-    const fetchData = async () => {
-      if (!user?._id) {
-        alert("Please login to view your bookings.");
-        setLoading(false);
-        return;
-      }
+    let isMounted = true;
 
+    const fetchBookingsAndReviews = async () => {
       try {
         const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-        // fetch bookings using correct endpoint
-        const bookingsRes = await axios.get(`${API}/api/bookings/my-bookings?customerId=${user._id}`);
+        // Fetch bookings (with populated photographer and service)
+        const bookingsRes = await axios.get(
+          `${API}/api/bookings/my-bookings?customerId=${user._id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
-        if (!isMounted) return;
+        if (isMounted && bookingsRes.data.success) {
+          setBookings(bookingsRes.data.bookings);
+        }
 
-        if (bookingsRes.data.success) setBookings(bookingsRes.data.bookings);
-
-        // Try to fetch reviews (non-critical)
+        // Fetch reviews if available
         try {
-          const reviewsRes = await axios.get(`${API}/api/reviews?customerId=${user._id}`);
-          if (reviewsRes.data.success) setReviews(reviewsRes.data.reviews);
-        } catch (reviewErr) {
-          // Reviews endpoint may not exist yet, not critical
-          console.warn("Reviews endpoint not available");
+          const reviewsRes = await axios.get(
+            `${API}/api/reviews?customerId=${user._id}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          if (isMounted && reviewsRes.data.success) {
+            setReviews(reviewsRes.data.reviews);
+          }
+        } catch {
+          console.warn("Reviews endpoint not available or failed");
         }
       } catch (err) {
         console.error("Error fetching bookings:", err);
+        alert("Failed to load bookings. Please try again.");
       } finally {
         if (isMounted) setLoading(false);
       }
     };
 
-    fetchData();
+    fetchBookingsAndReviews();
 
     return () => {
       isMounted = false;
     };
-  }, [user]);
+  }, [user?._id, token]);
 
+  // Map reviews by bookingId for fast lookup
   const reviewsMap = useMemo(() => {
     const map = {};
     reviews.forEach((r) => {
@@ -64,6 +78,7 @@ const UserBookings = () => {
 
   const hasReview = (bookingId) => !!reviewsMap[bookingId];
 
+  // Cancel booking
   const handleCancelBooking = async (bookingId) => {
     const confirmCancel = window.confirm(
       "Are you sure you want to cancel this booking?"
@@ -71,11 +86,12 @@ const UserBookings = () => {
     if (!confirmCancel) return;
 
     try {
-      const API = import.meta.env.VITE_API_URL;
+      const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
       const res = await axios.patch(
         `${API}/api/bookings/${bookingId}/cancel`,
-        { userId: user._id, reason: "Cancelled by user" }
+        { userId: user._id, reason: "Cancelled by user" },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (res.data.success) {
@@ -89,7 +105,7 @@ const UserBookings = () => {
         alert(res.data.message || "Failed to cancel booking");
       }
     } catch (err) {
-      console.error("Cancel error:", err);
+      console.error("Cancel booking error:", err);
       alert(err.response?.data?.message || "Something went wrong");
     }
   };
@@ -113,10 +129,10 @@ const UserBookings = () => {
                 </span>
               </h3>
 
-              <p>
+              {/* <p>
                 <strong>Service:</strong>{" "}
-                {booking.photographerId?.specialization || "N/A"}
-              </p>
+                {booking.serviceId?.serviceName || "N/A"}
+              </p> */}
 
               <p>
                 <strong>Date:</strong>{" "}
@@ -136,10 +152,11 @@ const UserBookings = () => {
               </p>
 
               <p className="status-section">
-                <strong>Status:</strong>
+                <strong>Status:</strong>{" "}
                 <span
-                  className={`status-badge ${booking.status?.toLowerCase() || "pending"
-                    }`}
+                  className={`status-badge ${
+                    booking.status?.toLowerCase() || "pending"
+                  }`}
                 >
                   {booking.status
                     ? booking.status[0].toUpperCase() + booking.status.slice(1)
@@ -149,7 +166,7 @@ const UserBookings = () => {
 
               {(booking.status === "cancelled" || booking.status === "rejected") && (
                 <p className="refund-msg">
-                  <strong>Refund:</strong> Your amount will be refunded to your account.
+                  <strong>Refund:</strong> Your amount will be refunded.
                 </p>
               )}
 
@@ -162,7 +179,6 @@ const UserBookings = () => {
                 </button>
               )}
 
-              {/* RATE & REVIEW OR EDIT REVIEW */}
               {booking.status === "completed" &&
                 (hasReview(booking._id) ? (
                   <button

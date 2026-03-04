@@ -6,6 +6,7 @@ const PhotographerBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Get logged-in user from localStorage
   const user = (() => {
     try {
       return JSON.parse(localStorage.getItem("user")) || null;
@@ -14,7 +15,7 @@ const PhotographerBookings = () => {
     }
   })();
 
-  const BASE_URL = import.meta.env.VITE_API_URL;
+  const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   useEffect(() => {
     if (!user?._id) {
@@ -25,8 +26,14 @@ const PhotographerBookings = () => {
 
     const fetchBookings = async () => {
       try {
+        const token = localStorage.getItem("token"); // auth token if route is protected
+
         const res = await axios.get(
-          `${BASE_URL}/api/bookings/photographer/${user._id}`
+          `${BASE_URL}/api/bookings/photographer-bookings`,
+          {
+            params: { userId: user._id }, // send userId, not photographerId
+            headers: { Authorization: `Bearer ${token}` },
+          }
         );
 
         if (res.data.success && Array.isArray(res.data.bookings)) {
@@ -45,19 +52,19 @@ const PhotographerBookings = () => {
     fetchBookings();
   }, [user?._id, BASE_URL]);
 
-  // ⭐ UPDATE STATUS
+  // Update booking status
   const handleStatusChange = async (bookingId, newStatus) => {
     try {
+      const token = localStorage.getItem("token");
       const res = await axios.put(
         `${BASE_URL}/api/bookings/${bookingId}`,
-        { status: newStatus }
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (res.data.success) {
         setBookings((prev) =>
-          prev.map((b) =>
-            b._id === bookingId ? { ...b, status: newStatus } : b
-          )
+          prev.map((b) => (b._id === bookingId ? { ...b, status: newStatus } : b))
         );
       }
     } catch (error) {
@@ -99,26 +106,22 @@ const PhotographerBookings = () => {
                 <strong>Amount:</strong> ₹{booking.amount}
               </p>
 
-              {/* ⭐ STATUS DISPLAY */}
               <p className="booking-status">
                 <strong>Status:</strong>{" "}
                 <span className={`status-badge ${booking.status}`}>
-                  {booking.status.charAt(0).toUpperCase() +
-                    booking.status.slice(1)}
+                  {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
                 </span>
               </p>
 
-              {/* ⭐ DISABLE STATUS UPDATE IF USER CANCELLED */}
               {booking.status === "cancelled" ? (
                 <p className="cancelled-note">
-                  ❌ This booking was cancelled by the user.  
-                  Status updates are disabled.
+                  ❌ This booking was cancelled by the user. Status updates are disabled.
                 </p>
               ) : (
                 <div className="update-status-section">
                   <label htmlFor={`status-${booking._id}`}>
                     <strong style={{ display: "block", marginBottom: "10px" }}>
-                         Update Status:
+                      Update Status:
                     </strong>
                   </label>
 

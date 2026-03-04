@@ -13,7 +13,7 @@ const BookingPage = () => {
 
   const service = location.state?.service;
   const photographer = location.state?.photographer;
-
+  const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user"));
   const customerId = user?._id;
 
@@ -242,48 +242,55 @@ const BookingPage = () => {
   };
 
   const handleBooking = async () => {
-    setLoading(true);
+  setLoading(true);
 
-    if (!customerId) {
-      alert("Please log in before booking.");
-      setLoading(false);
-      return;
-    }
+  if (!customerId) {
+    alert("Please log in before booking.");
+    setLoading(false);
+    return;
+  }
 
-    try {
-      const res = await axios.post(`${API_URL}/api/bookings`, {
-        // ✅ updated
-        customerId,
-        photographerId,
-        serviceId,
-        eventDate: formData.eventDate,
-        eventTime: formData.eventTime,
-        durationHours: service?.durationHours,
-        location: formData.location,
-        amount: service?.priceINR,
-      });
+  if (!formData.eventDate || !formData.eventTime || !formData.location) {
+    alert("Please fill all booking details.");
+    setLoading(false);
+    return;
+  }
 
-      if (res.data.success) {
-        const { order, booking } = res.data;
+  try {
+    const res = await axios.post(`${API_URL}/api/bookings`, {
+      customerId,
+      photographerId,
+      serviceId,
+      eventDate: formData.eventDate,
+      eventTime: formData.eventTime,
+      durationHours: service?.durationHours || 1,
+      location: formData.location,
+      amount, // ✅ FIXED
+    },
+    {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    }});
 
-        // Open Razorpay — booking only confirmed after payment verification
-        if (order) {
-          handleRazorpayPayment(order, booking, amount <= 100000);
-        } else {
-          alert("Failed to create payment order.");
-          setLoading(false);
-        }
+    if (res.data.success) {
+      const { order, booking } = res.data;
+
+      if (order) {
+        handleRazorpayPayment(order, booking, amount <= 100000);
       } else {
-        alert(res.data.message || "Booking failed.");
+        alert("Failed to create payment order.");
         setLoading(false);
       }
-    } catch (err) {
-      console.error("Booking error:", err);
-      alert("Something went wrong while creating booking.");
+    } else {
+      alert(res.data.message || "Booking failed.");
       setLoading(false);
     }
-  };
-
+  } catch (err) {
+    console.error("Booking error:", err.response?.data || err);
+    alert(err.response?.data?.message || "Something went wrong.");
+    setLoading(false);
+  }
+};
   if (paymentSuccess) {
     return (
       <div className="payment-success-wrapper fade-in">
